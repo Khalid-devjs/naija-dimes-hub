@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Select Package | Naija Dimes Hub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('layout') %>
+  <main class="container" style="max-width:800px; margin:0 auto; padding:2rem 1rem;">
+    <% if (error) { %>
+      <div class="card" style="background:rgba(255,0,0,.1); border-color:rgba(255,0,0,.3);">
+        <h3 style="color:var(--danger);"><%= error %></h3>
+      </div>
+    <% } %>
+    <h1>Select Your Diamond Package</h1>
+    <p style="color:var(--muted);">Choose the amount of Free Fire Diamonds you want to purchase.</p>
+    <form method="POST" action="/buy">
+      <div class="flex" style="gap:1rem; flex-wrap:wrap;">
+        <% packages.forEach(p => { %>
+          <label style="flex:1 1 200px; text-align:center; cursor:pointer; border:2px solid transparent; border-radius:12px; padding:1rem; transition:all .2s;" 
+                 onclick="this.style.borderColor='var(--primary)'; this.querySelector('input').checked=true;">
+            <input type="radio" name="package_id" value="<%= p.id %>" style="display:none;">
+            <div class="card glow" style="height:100%;">
+              <h3 style="color:var(--primary); margin:0 0 .5rem 0;">���💎 <%= p.dimes %> Dimes</h3>
+              <p style="margin:0; font-size:1.5rem; font-weight:600;">�₦<%= formatNairaShort(p.price_kobo) %></p>
+              <% if (p.badge) { %>
+                <span class="badge badge-<%= p.badge %>"><%= p.badge %></span>
+              <% } %>
+            </div>
+          </label>
+        <% }) %>
+      </div>
+      <button type="submit" class="btn btn-block" style="margin-top:2rem;">Continue to UID Entry</button>
+    </form>
+  </main>
+</body>
+</html>

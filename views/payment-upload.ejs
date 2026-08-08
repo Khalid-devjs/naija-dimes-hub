@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload Payment | Naija Dimes Hub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('layout') %>
+  <main class="container" style="max-width:800px; margin:0 auto; padding:2rem 1rem;">
+    <div class="timeline">
+      <div class="step done">��✓ Select Package</div>
+      <div class="step done">��✓ Enter Free Fire UID</div>
+      <div class="step done">��✓ Your Information</div>
+      <div class="step done">�� ORDER CREATED</div>
+      <div class="step">● Upload Payment Screenshot</div>
+      <div class="step">○ Admin Approval</div>
+    </div>
+    <% if (error) { %>
+      <div class="card" style="background:rgba(255,0,0,.1); border-color:rgba(255,0,0,.3);">
+        <h3 style="color:var(--danger);"><%= error %></h3>
+      </div>
+    <% } %>
+    <div class="card glow">
+      <h1 style="text-align:center;">Upload Payment Screenshot</h1>
+      <p style="color:var(--muted); text-align:center;">Please upload a clear screenshot of your bank transfer.</p>
+      <form method="POST" action="/payment/<%= order.id %>/upload" enctype="multipart/form-data">
+        <input type="hidden" name="order_id" value="<%= order.id %>">
+        <div class="form-group">
+          <label for="screenshot">Payment Screenshot *</label>
+          <input type="file" id="screenshot" name="screenshot" accept="image/*" required>
+          <div id="preview" class="mt-2"></div>
+          <p style="color:var(--muted); font-size:.8rem;">Allowed formats: JPG, JPEG, PNG, WEBP. Max size: 5 MB.</p>
+        </div>
+        <div class="form-group">
+          <label for="ref">Transaction Reference *</label>
+          <input type="text" id="ref" name="transaction_ref" required placeholder="e.g. FT20260809ABCD123">
+        </div>
+        <div class="form-group">
+          <label for="sender">Sender Name (as on bank account)</label>
+          <input type="text" id="sender" name="sender_name" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount Paid (�₦)</label>
+          <input type="number" id="amount" name="amount_paid" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="date">Payment Date</label>
+          <input type="date" id="date" name="payment_date" required>
+        </div>
+        <p style="color:var(--muted); font-size:.8rem; margin-top:1rem;">
+          �� ⚠��️ Double-check that the amount matches exactly what was shown in the order page.
+        </p>
+        <button type="submit" class="btn btn-block">Submit Payment</button>
+        <a href="/track" class="btn btn-secondary" style="margin-top:0.5rem; display:block;">Track Order</a>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('screenshot').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const preview = document.getElementById('preview');
+          preview.innerHTML = '<img src="' + event.target.result + '" class="img-preview" alt="Preview">';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

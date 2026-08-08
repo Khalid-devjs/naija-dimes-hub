@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Packages | Naija Dimes Hub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('layout') %>
+  <main class="container" style="max-width:1200px; margin:0 auto; padding:2rem 1rem;">
+    <h1>Diamond Packages</h1>
+    <p style="color:var(--muted);">Prices can be adjusted in the Admin Dashboard.</p>
+    <div class="flex flex-wrap" style="gap:1rem;">
+      <% packages.forEach(p => { %>
+        <div class="card glow">
+          <h3 style="color:var(--primary);">💎 <%= p.dimes %> Dimes</h3>
+          <p>₦<%= formatNairaShort(p.price_kobo) %></p>
+          <% if (p.badge) { %>
+            <span class="badge badge-<%= p.badge %>"><%= p.badge %></span>
+          <% } %>
+          <p style="color:var(--muted); font-size:.85rem;">Active: <%= p.active ? 'Yes' : 'No' %></p>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</body>
+</html>

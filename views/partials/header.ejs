@@ -1,0 +1,14 @@
+<nav class="navbar glass glow" style="padding:1rem; position:sticky; top:0; z-index:1000;">
+  <div class="flex flex-center">
+    <a href="/" style="font-size:1.5rem; font-weight:700; color:var(--primary); text-decoration:none;">Naija Dimes Hub</a>
+    <div class="flex" style="margin-left:auto; gap:1.5rem;">
+      <% if (!user) { %>
+        <a href="/login" class="btn btn-secondary">Login</a>
+        <a href="/register" class="btn">Register</a>
+      <% } else { %>
+        <span style="color:var(--muted);">Welcome, <%= user.full_name || user.username %></span>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+      <% } %>
+    </div>
+  </div>
+</nav>
