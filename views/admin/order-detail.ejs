@@ -31,9 +31,9 @@
         <tr><th>Sender</th><td><%= payment.sender_name || '-' %></td></tr>
         <tr><th>Amount</th><td><%= formatNaira(payment.amount_kobo) %></td></tr>
         <tr><th>Status</th><td><%= payment.status %></td></tr>
-        <tr><th>Screenshot</th><td>
+        <tr><th>Receipt</th><td>
           <% if (payment.screenshot_path) { %>
-            <a href="<%= payment.screenshot_path %>" target="_blank">View</a>
+            <img class="thumb" src="<%= payment.screenshot_path %>" alt="receipt" style="max-width:150px; max-height:110px;" loading="lazy" title="Click to view">
           <% } else { %>-<% } %>
         </td></tr>
       </tbody>

@@ -100,7 +100,7 @@ router.get("/", (req, res) => {
 // ── ORDERS ──
 router.get("/orders", (req, res) => {
   let { q, status, pkg, date } = req.query;
-  let sql = "SELECT o.*, p.dimes, p.price_kobo FROM orders o JOIN diamond_packages p ON o.package_id = p.id";
+  let sql = "SELECT o.*, p.dimes, p.price_kobo, (SELECT screenshot_path FROM payments WHERE order_id = o.id AND screenshot_path IS NOT NULL ORDER BY id DESC LIMIT 1) as receipt FROM orders o JOIN diamond_packages p ON o.package_id = p.id";
   const where = [];
   const params = [];
   if (q) { where.push("(o.order_code LIKE ? OR o.freefire_uid LIKE ? OR o.customer_name LIKE ? OR o.whatsapp LIKE ? OR o.email LIKE ?)"); params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }

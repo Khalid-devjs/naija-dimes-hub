@@ -16,7 +16,7 @@
       <p class="muted">No orders found.</p>
     <% } else { %>
       <table>
-        <thead><tr><th>Order</th><th>Customer</th><th>UID</th><th>Dimes</th><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <thead><tr><th>Order</th><th>Customer</th><th>UID</th><th>Dimes</th><th>Amount</th><th>Receipt</th><th>Status</th><th>Date</th><th></th></tr></thead>
         <tbody>
           <% orders.forEach(o => { %>
             <tr>
@@ -25,6 +25,13 @@
               <td><%= o.freefire_uid %></td>
               <td><%= o.dimes %></td>
               <td><%= formatNaira(o.amount_kobo) %></td>
+              <td>
+                <% if (o.receipt) { %>
+                  <img class="thumb" src="<%= o.receipt %>" alt="receipt" loading="lazy" title="Click to view receipt">
+                <% } else { %>
+                  <span class="muted">—</span>
+                <% } %>
+              </td>
               <td><span class="badge b-<%= o.status.toLowerCase() %>"><%= LABELS[o.status] || o.status %></span></td>
               <td><span class="muted"><%= o.created_at %></span></td>
               <td><a class="btn btn-p" href="/admin/orders/<%= o.id %>">View</a></td>

@@ -23,8 +23,13 @@
       </tbody>
     </table>
     <% if (payment.screenshot_path) { %>
-      <h4>Screenshot</h4>
-      <img class="thumb" src="<%= payment.screenshot_path %>" alt="payment screenshot" onclick="window.open(this.src)">
+      <h4>📸 Payment Receipt</h4>
+      <div class="receipt-holder">
+        <img class="receipt" src="<%= payment.screenshot_path %>" alt="payment receipt for <%= payment.transaction_ref %>" loading="lazy">
+      </div>
+      <p class="muted" style="font-size:.82rem; margin:.25rem 0 0;">Click the receipt to zoom. No download needed.</p>
+    <% } else { %>
+      <p class="muted">No receipt uploaded.</p>
     <% } %>
   </div>
 

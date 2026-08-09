@@ -1,4 +1,28 @@
-  </main>
+</main>
 </div>
+<!-- Receipt lightbox -->
+<div class="lightbox" id="receiptLightbox" onclick="this.classList.remove('open')">
+  <span class="lb-hint">✕</span>
+  <img id="lbImg" src="" alt="receipt zoom">
+</div>
+<script>
+  // Event delegation — one listener for every .thumb / .receipt click (no inline handlers, CSP-safe)
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var img = t && t.closest ? t.closest('img.receipt, img.thumb') : null;
+    if (!img) return;
+    var lb = document.getElementById('receiptLightbox');
+    var lbImg = document.getElementById('lbImg');
+    if (!lb || !lbImg) return;
+    lbImg.src = img.getAttribute('src') || img.src;
+    lb.classList.add('open');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      var lb = document.getElementById('receiptLightbox');
+      if (lb) lb.classList.remove('open');
+    }
+  });
+</script>
 </body>
 </html>
