@@ -1,0 +1,37 @@
+<%- include('partials/head') %>
+  <% if (query.msg === 'saved') { %><div class="msg msg-ok">✅ Support settings saved.</div><% } %>
+  <div class="card" style="max-width:720px;">
+    <form method="POST" action="/admin/settings/support">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div><label>WhatsApp</label><input type="text" name="whatsapp" value="<%= support.whatsapp || '' %>"></div>
+        <div><label>Telegram</label><input type="text" name="telegram" value="<%= support.telegram || '' %>"></div>
+        <div><label>Email</label><input type="text" name="email" value="<%= support.email || '' %>"></div>
+      </div>
+      <h4>FAQ</h4>
+      <div id="faqList">
+        <% faq.forEach((f, i) => { %>
+          <div class="faq-item" style="border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:.75rem; margin-bottom:.5rem;">
+            <input type="text" name="faq[<%= i %>][q]" placeholder="Question" value="<%= f.q %>">
+            <textarea name="faq[<%= i %>][a]" placeholder="Answer" rows="2"><%= f.a %></textarea>
+          </div>
+        <% }) %>
+      </div>
+      <button type="button" class="btn btn-sec" onclick="addFaq()">+ Add FAQ</button>
+      <button type="submit" class="btn btn-p">Save Settings</button>
+    </form>
+  </div>
+  <script>
+    let faqCount = <%= faq.length %>;
+    function addFaq() {
+      const el = document.getElementById('faqList');
+      const div = document.createElement('div');
+      div.className = 'faq-item';
+      div.style.cssText = 'border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:.75rem; margin-bottom:.5rem;';
+      div.innerHTML = '<input type="text" name="faq[' + faqCount + '][q]" placeholder="Question">' +
+                      '<textarea name="faq[' + faqCount + '][a]" placeholder="Answer" rows="2"></textarea>';
+      el.appendChild(div);
+      faqCount++;
+    }
+  </script>
+<%- include('partials/foot') %>

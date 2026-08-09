@@ -1,0 +1,28 @@
+<%- include('partials/head') %>
+  <div class="grid-stats">
+    <div class="stat"><div class="num"><%= totals.orders %></div><div class="lbl">Total Orders</div></div>
+    <div class="stat"><div class="num" style="color:#ff9f43;"><%= totals.pending %></div><div class="lbl">Pending</div></div>
+    <div class="stat"><div class="num" style="color:#1e88e5;"><%= totals.under_review %></div><div class="lbl">Under Review</div></div>
+    <div class="stat"><div class="num" style="color:var(--accent);"><%= totals.completed %></div><div class="lbl">Completed</div></div>
+    <div class="stat"><div class="num" style="color:var(--danger);"><%= totals.rejected %></div><div class="lbl">Rejected</div></div>
+    <div class="stat"><div class="num"><%= totals.users %></div><div class="lbl">Customers</div></div>
+    <div class="stat"><div class="num" style="color:var(--accent);">₦<%= formatNaira(totals.revenue) %></div><div class="lbl">Revenue (Completed)</div></div>
+    <div class="stat"><div class="num"><%= totals.payments_today %></div><div class="lbl">Payments Today</div></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Orders — Last 7 Days</h3>
+    <% if (trend.length === 0) { %>
+      <p class="muted">No orders in the last 7 days.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Date</th><th>Orders</th><th>Volume (₦)</th></tr></thead>
+        <tbody>
+          <% trend.forEach(t => { %>
+            <tr><td><%= t.d %></td><td><%= t.c %></td><td><%= formatNaira(t.r) %></td></tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

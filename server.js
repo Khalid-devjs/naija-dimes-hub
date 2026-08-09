@@ -9,6 +9,7 @@ const multer = require("multer");
 const config = require("./src/config");
 const db = require("./src/db");
 const { logActivity } = require("./src/lib/audit");
+const { toKobo, formatNaira } = require("./src/lib/money");
 
 // routes (will create next)
 const publicRoutes = require("./src/routes/public");
@@ -57,6 +58,7 @@ app.use(express.json());
 
 // ── static assets ──
 app.use(express.static(config.publicDir, { maxAge: "1d" }));
+app.use("/uploads", express.static(config.uploadsDir, { maxAge: "1d" }));
 
 // ── session ──
 app.use(session({
@@ -66,7 +68,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: config.isProd && config.trustProxy,
+    secure: false,
     sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
   },
@@ -76,7 +78,8 @@ app.use(session({
 app.use((req, res, next) => {
   const token = req.session.csrf || require("crypto").randomBytes(32).toString("hex");
   req.session.csrf = token;
-  res.cookie("csrf_token", token, { httpOnly: true, sameSite: "lax", secure: config.isProd && config.trustProxy });
+  const secure = req.secure || (req.headers["x-forwarded-proto"] === "https");
+  res.cookie("csrf_token", token, { httpOnly: true, sameSite: "lax", secure });
   res.locals.csrfToken = token;
   next();
 });
@@ -140,6 +143,38 @@ app.use("/payment", paymentLimiter); // Note: this is for the payment upload rou
 
 app.use("/", publicRoutes);
 app.use("/admin", adminRoutes);
+
+// ── payment screenshot upload (needs multer, defined above) ──
+app.get("/buy/upload/:id", (req, res) => {
+  const order = db.get("SELECT * FROM orders WHERE id = ?", [req.params.id]);
+  if (!order) return res.status(404).render("error", { message: "Order not found", status: 404 });
+  res.render("payment-upload", { order, error: null });
+});
+
+app.post("/payment/:id/upload", upload.single("screenshot"), (req, res) => {
+  const order = db.get("SELECT * FROM orders WHERE id = ?", [req.params.id]);
+  if (!order) return res.status(404).render("error", { message: "Order not found", status: 404 });
+  if (!req.file) {
+    return res.render("payment-upload", { order, error: "Please attach a screenshot" });
+  }
+  const ref = (req.body.transaction_ref || "").trim().toUpperCase();
+  if (!ref) {
+    return res.render("payment-upload", { order, error: "Transaction reference is required" });
+  }
+  const amountKobo = toKobo(parseFloat(req.body.amount_paid) || 0);
+  // unique ref guard
+  const existing = db.get("SELECT id FROM payments WHERE transaction_ref = ?", [ref]);
+  if (existing) {
+    return res.render("payment-upload", { order, error: "That transaction reference was already used" });
+  }
+  db.run(
+    `INSERT INTO payments (order_id, transaction_ref, sender_name, amount_kobo, expected_kobo, paid_date, screenshot_path, status)
+     VALUES (?,?,?,?,?,?,?, 'SUBMITTED')`,
+    order.id, ref, req.body.sender_name || "", amountKobo, order.amount_kobo, req.body.payment_date || "", `/uploads/${req.file.filename}`
+  );
+  db.run("UPDATE orders SET status = 'PAYMENT_UNDER_REVIEW', updated_at = datetime('now') WHERE id = ?", order.id);
+  res.redirect(`/track?code=${order.order_code}&msg=submitted`);
+});
 
 // ── 404 ──
 app.use((req, res) => res.status(404).render("error", { message: "Page not found", status: 404 }));

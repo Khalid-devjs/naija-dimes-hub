@@ -1,0 +1,25 @@
+<%- include('partials/head') %>
+  <div class="card">
+    <% if (payments.length === 0) { %>
+      <p class="muted">No payments yet.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Ref</th><th>Order</th><th>Customer</th><th>UID</th><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          <% payments.forEach(p => { %>
+            <tr>
+              <td><a href="/admin/payments/<%= p.id %>"><%= p.transaction_ref %></a></td>
+              <td><%= p.order_code %></td>
+              <td><%= p.customer_name %></td>
+              <td><%= p.freefire_uid %></td>
+              <td><%= formatNaira(p.amount_kobo) %></td>
+              <td><span class="badge b-<%= p.status.toLowerCase() %>"><%= p.status %></span></td>
+              <td><span class="muted"><%= p.created_at %></span></td>
+              <td><a class="btn btn-p" href="/admin/payments/<%= p.id %>">Review</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

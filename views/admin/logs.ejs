@@ -1,0 +1,26 @@
+<%- include('partials/head') %>
+  <div class="card">
+    <form method="GET" action="/admin/logs" class="flex" style="margin-bottom:1rem;">
+      <input type="text" name="action" placeholder="Filter by action" value="<%= query.action || '' %>" style="flex:1; margin-bottom:0;">
+      <button type="submit" class="btn btn-p">Filter</button>
+    </form>
+    <% if (logs.length === 0) { %>
+      <p class="muted">No activity logged yet.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Time</th><th>Admin</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
+        <tbody>
+          <% logs.forEach(l => { %>
+            <tr>
+              <td><span class="muted"><%= l.created_at %></span></td>
+              <td><%= l.admin_name || l.admin_id || '-' %></td>
+              <td><%= l.action %></td>
+              <td><%= l.target_type || '-' %> <%= l.target_id ? '#' + l.target_id : '' %></td>
+              <td><span class="muted"><%= l.details || '' %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

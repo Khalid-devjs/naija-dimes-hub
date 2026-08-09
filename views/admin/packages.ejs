@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+  <div class="flex" style="justify-content:space-between; margin-bottom:1rem;">
+    <div></div>
+    <a class="btn btn-p" href="/admin/packages/new">+ New Package</a>
+  </div>
+  <div class="card">
+    <% if (packages.length === 0) { %>
+      <p class="muted">No packages yet.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Dimes</th><th>Price</th><th>Old Price</th><th>Badge</th><th>Featured</th><th>Active</th><th>Order</th><th></th></tr></thead>
+        <tbody>
+          <% packages.forEach(p => { %>
+            <tr>
+              <td><%= p.dimes %></td>
+              <td><%= formatNaira(p.price_kobo) %></td>
+              <td><%= p.old_price_kobo ? formatNaira(p.old_price_kobo) : '-' %></td>
+              <td><%= p.badge || '-' %></td>
+              <td><%= p.featured ? '⭐' : '' %></td>
+              <td><%= p.active ? '✅' : '❌' %></td>
+              <td><%= p.sort_order %></td>
+              <td class="flex">
+                <a class="btn btn-p" href="/admin/packages/<%= p.id %>/edit">Edit</a>
+                <form method="POST" action="/admin/packages/<%= p.id %>/delete" onsubmit="return confirm('Delete this package?');">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn btn-r">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

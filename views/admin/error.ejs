@@ -1,0 +1,7 @@
+<%- include('partials/head') %>
+  <div class="card" style="text-align:center;">
+    <h2 style="color:var(--danger);">⚠️ <%= message || 'Error' %></h2>
+    <p class="muted"><%= typeof status !== 'undefined' ? status : 403 %></p>
+    <a class="btn btn-p" href="/admin/">Back to Dashboard</a>
+  </div>
+<%- include('partials/foot') %>

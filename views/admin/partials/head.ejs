@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>Admin — Naija Dimes Hub</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    :root {
+      --bg:#0a0a0a; --card:rgba(255,255,255,.07); --primary:#00d4ff; --accent:#00ff88;
+      --danger:#ff4757; --text:#eee; --muted:#888;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:linear-gradient(135deg,#0a0a0a,#030303); color:var(--text); font-family:'Inter','Segoe UI',system-ui,sans-serif; }
+    .admin-wrap { display:flex; min-height:100vh; }
+    .sidebar { width:220px; background:rgba(255,255,255,.04); border-right:1px solid rgba(255,255,255,.08); padding:1.5rem 1rem; flex-shrink:0; }
+    .sidebar h3 { color:var(--primary); margin:0 0 1.5rem; font-size:1.1rem; }
+    .sidebar a { display:block; padding:.6rem .8rem; color:var(--muted); text-decoration:none; border-radius:8px; margin-bottom:.25rem; font-size:.9rem; }
+    .sidebar a:hover, .sidebar a.active { background:rgba(0,212,255,.12); color:var(--primary); }
+    .sidebar .sep { border-top:1px solid rgba(255,255,255,.08); margin:.8rem 0; }
+    .content { flex:1; padding:2rem; overflow-x:auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+    .topbar h1 { margin:0; font-size:1.4rem; color:#fff; }
+    .topbar .admin-chip { color:var(--muted); font-size:.85rem; }
+    .card { background:var(--card); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:1.5rem; margin-bottom:1rem; }
+    .grid-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+    .stat { background:var(--card); border-radius:10px; padding:1rem; text-align:center; }
+    .stat .num { font-size:1.6rem; font-weight:700; color:var(--primary); }
+    .stat .lbl { color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { padding:.6rem .75rem; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); font-size:.88rem; }
+    th { color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; }
+    tr:hover td { background:rgba(255,255,255,.03); }
+    .badge { display:inline-block; padding:.2rem .5rem; border-radius:4px; font-size:.72rem; font-weight:600; }
+    .b-pending { background:#ff9f43; color:#000; }
+    .b-review { background:#37474f; color:#fff; }
+    .b-confirmed { background:#00c853; color:#fff; }
+    .b-processing { background:#1e88e5; color:#fff; }
+    .b-completed { background:#00c853; color:#fff; }
+    .b-rejected { background:#ff5252; color:#fff; }
+    .b-cancelled, .b-refunded { background:#555; color:#fff; }
+    .b-submitted { background:#5c6bc0; color:#fff; }
+    .b-approved { background:#00c853; color:#fff; }
+    .b-moreinfo { background:#ffb300; color:#000; }
+    .btn { display:inline-block; padding:.5rem 1rem; border-radius:6px; font-weight:600; text-decoration:none; cursor:pointer; border:none; font-size:.85rem; }
+    .btn-p { background:var(--primary); color:#000; }
+    .btn-g { background:var(--accent); color:#000; }
+    .btn-r { background:var(--danger); color:#fff; }
+    .btn-sec { background:var(--muted); color:#000; }
+    .btn:hover { filter:brightness(1.1); }
+    input,select,textarea { width:100%; padding:.6rem; border:1px solid rgba(255,255,255,.2); border-radius:6px; background:rgba(0,0,0,.3); color:var(--text); margin-bottom:.75rem; }
+    label { display:block; font-size:.82rem; color:var(--muted); margin-bottom:.25rem; }
+    .form-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+    .msg { padding:.8rem 1rem; border-radius:8px; margin-bottom:1rem; font-size:.88rem; }
+    .msg-ok { background:rgba(0,200,83,.15); border:1px solid rgba(0,200,83,.3); color:var(--accent); }
+    .msg-err { background:rgba(255,71,87,.15); border:1px solid rgba(255,71,87,.3); color:var(--danger); }
+    .muted { color:var(--muted); }
+    .flex { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+    .checkbox { width:auto; margin:0 .4rem 0 0; }
+    a { color:var(--primary); }
+    img.thumb { max-width:120px; max-height:90px; border-radius:6px; border:1px solid rgba(255,255,255,.15); }
+    @media (max-width:768px) { .admin-wrap { flex-direction:column; } .sidebar { width:100%; border-right:none; border-bottom:1px solid rgba(255,255,255,.08); } }
+  </style>
+</head>
+<body>
+<div class="admin-wrap">
+  <aside class="sidebar">
+    <h3>⚡ Naija Dimes</h3>
+    <a href="/admin/" class="<%= reqPath === '/admin/' ? 'active' : '' %>">📊 Dashboard</a>
+    <a href="/admin/orders" class="<%= reqPath && reqPath.startsWith('/admin/orders') ? 'active' : '' %>">📦 Orders</a>
+    <a href="/admin/payments" class="<%= reqPath && reqPath.startsWith('/admin/payments') ? 'active' : '' %>">💳 Payments</a>
+    <div class="sep"></div>
+    <a href="/admin/packages" class="<%= reqPath && reqPath.startsWith('/admin/packages') ? 'active' : '' %>">💎 Packages</a>
+    <a href="/admin/announcements" class="<%= reqPath && reqPath.startsWith('/admin/announcements') ? 'active' : '' %>">📢 Announcements</a>
+    <a href="/admin/banners" class="<%= reqPath && reqPath.startsWith('/admin/banners') ? 'active' : '' %>">🖼️ Banners</a>
+    <a href="/admin/homepage" class="<%= reqPath && reqPath.startsWith('/admin/homepage') ? 'active' : '' %>">🏠 Homepage</a>
+    <div class="sep"></div>
+    <a href="/admin/customers" class="<%= reqPath && reqPath.startsWith('/admin/customers') ? 'active' : '' %>">👥 Customers</a>
+    <a href="/admin/admins" class="<%= reqPath && reqPath.startsWith('/admin/admins') ? 'active' : '' %>">🛡️ Admins</a>
+    <a href="/admin/logs" class="<%= reqPath && reqPath.startsWith('/admin/logs') ? 'active' : '' %>">📜 Activity Log</a>
+    <div class="sep"></div>
+    <a href="/admin/settings/payment" class="<%= reqPath && reqPath.startsWith('/admin/settings/payment') ? 'active' : '' %>">🏦 Payment Settings</a>
+    <a href="/admin/settings/support" class="<%= reqPath && reqPath.startsWith('/admin/settings/support') ? 'active' : '' %>">💬 Support Settings</a>
+    <a href="/admin/settings/site" class="<%= reqPath && reqPath.startsWith('/admin/settings/site') ? 'active' : '' %>">⚙️ Site Settings</a>
+    <div class="sep"></div>
+    <a href="/admin/logout" style="color:var(--danger);">🚪 Logout</a>
+  </aside>
+  <main class="content">
+    <div class="topbar">
+      <h1><%= typeof title !== 'undefined' ? title : 'Admin' %></h1>
+      <span class="admin-chip"><%= admin.username %> · <%= admin.role %></span>
+    </div>

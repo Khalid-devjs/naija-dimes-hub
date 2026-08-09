@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+  <div class="card">
+    <% if (customers.length === 0) { %>
+      <p class="muted">No customers yet.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Name</th><th>WhatsApp</th><th>Email</th><th>UID</th><th>Orders</th><th>Joined</th></tr></thead>
+        <tbody>
+          <% customers.forEach(c => { %>
+            <tr>
+              <td><%= c.full_name %></td>
+              <td><%= c.whatsapp %></td>
+              <td><%= c.email || '-' %></td>
+              <td><%= c.freefire_uid %></td>
+              <td><%= c.orders %></td>
+              <td><span class="muted"><%= c.created_at %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

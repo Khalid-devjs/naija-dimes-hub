@@ -1,0 +1,15 @@
+  </main>
+  <footer style="text-align:center; padding:2rem 1rem; color:var(--muted); border-top:1px solid rgba(255,255,255,.08);">
+    © <%= new Date().getFullYear() %> Naija Dimes Hub — Fast. Simple. Reliable.
+  </footer>
+  <% if (typeof session !== 'undefined' && session && session.admin) { %>
+  <script>
+    window.ADMIN = {
+      id: <%= JSON.stringify(session.admin.id) %>,
+      username: "<%= session.admin.username %>",
+      role: "<%= session.admin.role %>"
+    };
+  </script>
+  <% } %>
+</body>
+</html>

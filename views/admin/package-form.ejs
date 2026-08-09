@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+  <div class="card" style="max-width:640px;">
+    <form method="POST" action="/admin/packages/save">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% if (pkg) { %><input type="hidden" name="id" value="<%= pkg.id %>"><% } %>
+      <div class="form-row">
+        <div><label>Dimes *</label><input type="number" name="dimes" required min="1" value="<%= pkg ? pkg.dimes : '' %>"></div>
+        <div><label>Price (₦) *</label><input type="number" name="price" required min="1" step="0.01" value="<%= pkg ? (pkg.price_kobo / 100) : '' %>"></div>
+        <div><label>Old Price (₦)</label><input type="number" name="old_price" min="0" step="0.01" value="<%= pkg && pkg.old_price_kobo ? (pkg.old_price_kobo / 100) : '' %>"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Badge</label>
+          <select name="badge">
+            <option value="">None</option>
+            <option value="popular" <%= pkg && pkg.badge === 'popular' ? 'selected' : '' %>>Popular</option>
+            <option value="best_value" <%= pkg && pkg.badge === 'best_value' ? 'selected' : '' %>>Best Value</option>
+            <option value="promo" <%= pkg && pkg.badge === 'promo' ? 'selected' : '' %>>Promo</option>
+          </select>
+        </div>
+        <div><label>Sort Order</label><input type="number" name="sort_order" value="<%= pkg ? pkg.sort_order : 0 %>"></div>
+      </div>
+      <div class="flex" style="margin-bottom:1rem;">
+        <label style="display:flex; align-items:center; gap:.4rem; margin-right:1.5rem;"><input type="checkbox" class="checkbox" name="active" <%= !pkg || pkg.active ? 'checked' : '' %>> Active</label>
+        <label style="display:flex; align-items:center; gap:.4rem;"><input type="checkbox" class="checkbox" name="featured" <%= pkg && pkg.featured ? 'checked' : '' %>> Featured</label>
+      </div>
+      <button type="submit" class="btn btn-p"><%= action === 'edit' ? 'Save Changes' : 'Create Package' %></button>
+      <a class="btn btn-sec" href="/admin/packages">Cancel</a>
+    </form>
+  </div>
+<%- include('partials/foot') %>

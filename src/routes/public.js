@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const { generateOrderCode } = require("../lib/orderId");
-const { formatNaira, toKobo, parseNaira } = require("../lib/money");
+const { formatNaira, formatNairaShort, koboToNaira, toKobo, parseNaira } = require("../lib/money");
 const { STATES, LABELS } = require("../lib/orderMachine");
 const { auditFrom } = require("../lib/audit");
 const config = require("../config");
@@ -18,6 +18,11 @@ router.use((req, res, next) => {
   res.locals.packages = packages;
   res.locals.announcement = announcement;
   res.locals.site = site;
+  res.locals.formatNaira = formatNaira;
+  res.locals.formatNairaShort = formatNairaShort;
+  res.locals.koboToNaira = koboToNaira;
+  res.locals.toKobo = toKobo;
+  res.locals.parseNaira = parseNaira;
   next();
 });
 
@@ -90,7 +95,7 @@ router.post("/buy/info", (req, res) => {
   // create order
   const orderCode = generateOrderCode(db);
   const amountKobo = pkg.price_kobo; // no discount yet; promo codes later
-  db.run(
+  const ins = db.run(
     `INSERT INTO orders (order_code, package_id, dimes, amount_kobo, base_kobo, customer_name, whatsapp, email, freefire_uid, freefire_nick, note, status, ip_address)
      VALUES (?,?,?,?,?,?,?,?,?,?,?, 'PENDING_PAYMENT', ?)`,
     orderCode,
@@ -106,9 +111,11 @@ router.post("/buy/info", (req, res) => {
     note,
     req.ip || req.socket?.remoteAddress || ""
   );
-  const orderId = db.lastInsertROWID;
+  const orderId = ins.lastInsertRowid;
+  const paymentSettings = db.get("SELECT * FROM payment_settings WHERE id = 1") || {};
   res.render("buy-step4", {
     step: 4,
+    paymentSettings,
     order: {
       id: orderId,
       code: orderCode,

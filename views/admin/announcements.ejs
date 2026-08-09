@@ -1,0 +1,26 @@
+<%- include('partials/head') %>
+  <div class="flex" style="justify-content:space-between; margin-bottom:1rem;">
+    <div></div>
+    <a class="btn btn-p" href="/admin/announcements/new">+ New Announcement</a>
+  </div>
+  <div class="card">
+    <% if (announcements.length === 0) { %>
+      <p class="muted">No announcements yet.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Title</th><th>Published</th><th>Expires</th><th>Created</th><th></th></tr></thead>
+        <tbody>
+          <% announcements.forEach(a => { %>
+            <tr>
+              <td><%= a.title %></td>
+              <td><%= a.published ? '✅' : '❌' %></td>
+              <td><span class="muted"><%= a.expires_at || 'never' %></span></td>
+              <td><span class="muted"><%= a.created_at %></span></td>
+              <td><a class="btn btn-p" href="/admin/announcements/new?id=<%= a.id %>">Edit</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

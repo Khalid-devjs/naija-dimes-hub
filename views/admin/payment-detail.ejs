@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+  <% if (query.msg === 'approved') { %><div class="msg msg-ok">✅ Payment approved — order moved to Processing.</div><% } %>
+  <% if (query.msg === 'rejected') { %><div class="msg msg-err">❌ Payment rejected.</div><% } %>
+  <% if (query.msg === 'moreinfo') { %><div class="msg">ℹ️ Requested more info.</div><% } %>
+
+  <div class="card">
+    <div class="flex" style="justify-content:space-between; margin-bottom:1rem;">
+      <h3 style="margin:0;">Payment <%= payment.transaction_ref %></h3>
+      <span class="badge b-<%= payment.status.toLowerCase() %>"><%= payment.status %></span>
+    </div>
+    <table>
+      <tbody>
+        <tr><th>Order</th><td><%= payment.order_code %></td></tr>
+        <tr><th>Customer</th><td><%= payment.customer_name %> (<%= payment.whatsapp %>)</td></tr>
+        <tr><th>Free Fire UID</th><td><%= payment.freefire_uid %> (<%= payment.freefire_nick || 'no nick' %>)</td></tr>
+        <tr><th>Dimes</th><td><%= payment.dimes %></td></tr>
+        <tr><th>Amount Paid</th><td><%= formatNaira(payment.amount_kobo) %></td></tr>
+        <tr><th>Expected</th><td><%= formatNaira(payment.base_kobo) %></td></tr>
+        <tr><th>Sender</th><td><%= payment.sender_name || '-' %></td></tr>
+        <tr><th>Paid Date</th><td><%= payment.paid_date || '-' %></td></tr>
+        <tr><th>Submitted</th><td><%= payment.created_at %></td></tr>
+        <tr><th>Reject Reason</th><td><%= payment.reject_reason || '-' %></td></tr>
+      </tbody>
+    </table>
+    <% if (payment.screenshot_path) { %>
+      <h4>Screenshot</h4>
+      <img class="thumb" src="<%= payment.screenshot_path %>" alt="payment screenshot" onclick="window.open(this.src)">
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Decision</h3>
+    <form method="POST" action="/admin/payments/<%= payment.id %>/approve" style="display:inline;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-g">✅ Approve</button>
+    </form>
+    <form method="POST" action="/admin/payments/<%= payment.id %>/reject" style="display:inline-block; margin-left:.5rem;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label style="display:block;">Reject reason</label>
+      <input type="text" name="reject_reason" placeholder="Why rejecting?">
+      <button type="submit" class="btn btn-r">❌ Reject</button>
+    </form>
+    <form method="POST" action="/admin/payments/<%= payment.id %>/moreinfo" style="display:inline-block; margin-left:.5rem;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-sec">ℹ️ Ask More Info</button>
+    </form>
+  </div>
+<%- include('partials/foot') %>

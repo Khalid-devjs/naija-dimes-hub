@@ -1,16 +1,16 @@
-// ── Database: schema, connection, seed ─────────────────────────────────
+// ── Database: schema, connection, seed (better-sqlite3, synchronous) ──
 const fs = require("fs");
 const path = require("path");
-const sqlite3 = require("sqlite3").verbose();
+const Database = require("better-sqlite3");
 const bcrypt = require("bcryptjs");
 const config = require("./config");
 
 fs.mkdirSync(config.dataDir, { recursive: true });
 fs.mkdirSync(config.uploadsDir, { recursive: true });
 
-const db = new sqlite3.Database(config.dbFile);
-
-db.on("trace", (sql) => {}); // silent
+const db = new Database(config.dbFile);
+db.pragma("journal_mode = WAL");
+db.pragma("foreign_keys = ON");
 
 // ── Schema ──────────────────────────────────────────────────────────────
 const SCHEMA = `
@@ -213,190 +213,123 @@ CREATE TABLE IF NOT EXISTS admin_activity_logs (
 CREATE INDEX IF NOT EXISTS idx_activity_created ON admin_activity_logs(created_at);
 `;
 
-db.serialize(() => {
-  db.exec(SCHEMA, (err) => {
-    if (err) console.error("[db] schema error:", err.message);
-  });
-});
+db.exec(SCHEMA);
+console.log("[db] ✓ Schema ready");
 
 // ── Seed ────────────────────────────────────────────────────────────────
-function run(cb) {
-  db.serialize(() => {
-    const adminCount = db.get("SELECT COUNT(*) c FROM admins", [], (e, row) => {
-      if (e) console.error("[db] admin count error:", e.message);
-    });
-    db.get("SELECT COUNT(*) c FROM admins", (e, row) => {
-      if (e) { console.error("[db] admin count error:", e.message); return; }
-      if (row.c === 0) {
-        const hash = bcrypt.hashSync(config.admin.password, 10);
-        db.run(
-          "INSERT INTO admins (username, full_name, email, password_hash, role) VALUES (?,?,?,?, 'super_admin')",
-          config.admin.username, "Super Admin", config.admin.email, hash,
-          (err) => {
-            if (err) console.error("[db] seed admin error:", err.message);
-            else console.log("[db] Super admin seeded:", config.username);
-          }
-        );
-      }
-    });
-
-    db.get("SELECT COUNT(*) c FROM diamond_packages", (e, row) => {
-      if (e) { console.error("[db] pkg count error:", e.message); return; }
-      if (row.c === 0) {
-        const packs = [
-          [300, 200000], [1000, 500000], [2000, 1000000], [5000, 2500000],
-          [10000, 5000000], [20000, 10000000], [30000, 15000000], [40000, 20000000],
-          [50000, 25000000], [75000, 37500000], [100000, 50000000],
-        ];
-        packs.forEach(([dimes, price], i) => {
-          const badge = dimes === 1000 ? "popular" : dimes === 5000 ? "best_value" : dimes === 100000 ? "promo" : "";
-          const featured = dimes === 1000 || dimes === 5000 || dimes === 10000 ? 1 : 0;
-          const old = dimes === 1000 ? 550000 : dimes === 2000 ? 1100000 : null;
-          db.run(
-            "INSERT INTO diamond_packages (dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,1,?,?)",
-            dimes, price, old, badge, featured, i + 1,
-            (err) => { if (err) console.error("[db] seed package error:", err.message); }
-          );
-        });
-        console.log("[db] 11 diamond packages seeded (editable in admin)");
-      }
-    });
-
-    db.get("SELECT COUNT(*) c FROM payment_settings", (e) => {
-      if (e) { console.error("[db] ps count error:", e.message); return; }
-      db.get("SELECT COUNT(*) c FROM payment_settings", (e2, row2) => {
-        if (e2) { console.error("[db] ps count error:", e2.message); return; }
-        if (row2.c === 0) {
-          db.run(
-            "INSERT INTO payment_settings (bank_name, account_name, account_number, instructions, reference_note) VALUES (?,?,?,?,?)",
-            "GTBank", "NAIJA DIMES HUB", "0000000000",
-            "1. Open your banking app.\n2. Transfer the exact amount shown.\n3. Complete the transaction.\n4. Save your payment receipt.\n5. Return to Naija Dimes Hub.\n6. Upload your payment screenshot.\n7. Submit your payment for verification.\n8. Wait for admin approval.",
-            "Use your Order ID as the transfer reference",
-            (err) => { if (err) console.error("[db] seed ps error:", err.message); }
-          );
-        }
-      });
-    });
-
-    // support + homepage + site_settings seeds omitted for brevity in this run; they're created as needed
-  });
-}
-
 function seed() {
-  db.serialize(() => {
-    // admins
-    db.get("SELECT COUNT(*) c FROM admins", (e, row) => {
-      if (e) return;
-      if (row.c === 0) {
-        const hash = bcrypt.hashSync(config.admin.password, 10);
-        db.run(
-          "INSERT INTO admins (username, full_name, email, password_hash, role) VALUES (?,?,?,?, 'super_admin')",
-          config.admin.username, "Super Admin", config.admin.email, hash
-        );
-        console.log("[db] ✓ Super admin seeded:", config.admin.username);
-      } else { console.log("[db] ✓ Admin exists, skipping"); }
-    });
+  // admins
+  let row = db.prepare("SELECT COUNT(*) c FROM admins").get();
+  if (row.c === 0) {
+    const hash = bcrypt.hashSync(config.admin.password, 10);
+    db.prepare(
+      "INSERT INTO admins (username, full_name, email, password_hash, role) VALUES (?,?,?,?, 'super_admin')"
+    ).run(config.admin.username, "Super Admin", config.admin.email, hash);
+    console.log("[db] ✓ Super admin seeded:", config.admin.username);
+  } else {
+    console.log("[db] ✓ Admin exists, skipping");
+  }
 
-    // packages
-    db.get("SELECT COUNT(*) c FROM diamond_packages", (e, row) => {
-      if (e) return;
-      if (row.c === 0) {
-        const packs = [
-          [300, 200000], [1000, 500000], [2000, 1000000], [5000, 2500000],
-          [10000, 5000000], [20000, 10000000], [30000, 15000000], [40000, 20000000],
-          [50000, 25000000], [75000, 37500000], [100000, 50000000],
-        ];
-        const ins = db.prepare(
-          "INSERT INTO diamond_packages (dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,1,?,?)"
-        );
-        packs.forEach(([dimes, price], i) => {
-          const badge = dimes === 1000 ? "popular" : dimes === 5000 ? "best_value" : dimes === 100000 ? "promo" : "";
-          const featured = dimes === 1000 || dimes === 5000 || dimes === 10000 ? 1 : 0;
-          const old = dimes === 1000 ? 550000 : dimes === 2000 ? 1100000 : null;
-          ins.run(dimes, price, old, badge, featured, i + 1);
-        });
-        console.log("[db] ✓ 11 diamond packages seeded (editable in admin)");
-      } else { console.log("[db] ✓ Packages exist, skipping"); }
+  // packages
+  row = db.prepare("SELECT COUNT(*) c FROM diamond_packages").get();
+  if (row.c === 0) {
+    const packs = [
+      [300, 200000], [1000, 500000], [2000, 1000000], [5000, 2500000],
+      [10000, 5000000], [20000, 10000000], [30000, 15000000], [40000, 20000000],
+      [50000, 25000000], [75000, 37500000], [100000, 50000000],
+    ];
+    const ins = db.prepare(
+      "INSERT INTO diamond_packages (dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,1,?,?)"
+    );
+    packs.forEach(([dimes, price], i) => {
+      const badge = dimes === 1000 ? "popular" : dimes === 5000 ? "best_value" : dimes === 100000 ? "promo" : "";
+      const featured = dimes === 1000 || dimes === 5000 || dimes === 10000 ? 1 : 0;
+      const old = dimes === 1000 ? 550000 : dimes === 2000 ? 1100000 : null;
+      ins.run(dimes, price, old, badge, featured, i + 1);
     });
+    console.log("[db] ✓ 11 diamond packages seeded (editable in admin)");
+  } else {
+    console.log("[db] ✓ Packages exist, skipping");
+  }
 
-    // payment settings
-    db.get("SELECT COUNT(*) c FROM payment_settings", (e, row) => {
-      if (e) return;
-      if (row.c === 0) {
-        db.run(
-          "INSERT INTO payment_settings (bank_name, account_name, account_number, instructions, reference_note) VALUES (?,?,?,?,?)",
-          "GTBank", "NAIJA DIMES HUB", "0000000000",
-          "1. Open your banking app.\n2. Transfer the exact amount shown.\n3. Complete the transaction.\n4. Save your payment receipt.\n5. Return to Naija Dimes Hub.\n6. Upload your payment screenshot.\n7. Submit your payment for verification.\n8. Wait for admin approval.",
-          "Use your Order ID as the transfer reference"
-        );
-        console.log("[db] ✓ Payment settings seeded (EDIT bank details in admin!)");
-      } else { console.log("[db] ✓ Payment settings exist, skipping"); }
-    });
+  // payment settings
+  row = db.prepare("SELECT COUNT(*) c FROM payment_settings").get();
+  if (row.c === 0) {
+    db.prepare(
+      "INSERT INTO payment_settings (bank_name, account_name, account_number, instructions, reference_note) VALUES (?,?,?,?,?)"
+    ).run(
+      "GTBank", "NAIJA DIMES HUB", "0000000000",
+      "1. Open your banking app.\n2. Transfer the exact amount shown.\n3. Complete the transaction.\n4. Save your payment receipt.\n5. Return to Naija Dimes Hub.\n6. Upload your payment screenshot.\n7. Submit your payment for verification.\n8. Wait for admin approval.",
+      "Use your Order ID as the transfer reference"
+    );
+    console.log("[db] ✓ Payment settings seeded (EDIT bank details in admin!)");
+  } else {
+    console.log("[db] ✓ Payment settings exist, skipping");
+  }
 
-    // support settings
-    db.get("SELECT COUNT(*) c FROM support_settings", (e, row) => {
-      if (e) return;
-      if (row.c === 0) {
-        db.run(
-          "INSERT INTO support_settings (whatsapp, telegram, email, faq_json) VALUES (?,?,?,?)",
-          "", "", "support@naijadimeshub.com",
-          JSON.stringify([
-            { q: "How long does delivery take?", a: "Diamonds are delivered within minutes to a few hours after your payment is approved." },
-            { q: "Is bank transfer the only payment method?", a: "Yes — pay by bank transfer, upload your receipt, and our admin verifies it manually." },
-            { q: "Which server does my UID need to be on?", a: "Send diamonds to the UID you specified. Double-check it — diamonds cannot be reversed once sent." },
-          ])
-        );
-        console.log("[db] ✓ Support settings seeded");
-      } else { console.log("[db] ✓ Support settings exist, skipping"); }
-    });
+  // support settings
+  row = db.prepare("SELECT COUNT(*) c FROM support_settings").get();
+  if (row.c === 0) {
+    db.prepare(
+      "INSERT INTO support_settings (whatsapp, telegram, email, faq_json) VALUES (?,?,?,?)"
+    ).run(
+      "", "", "support@naijadimeshub.com",
+      JSON.stringify([
+        { q: "How long does delivery take?", a: "Diamonds are delivered within minutes to a few hours after your payment is approved." },
+        { q: "Is bank transfer the only payment method?", a: "Yes — pay by bank transfer, upload your receipt, and our admin verifies it manually." },
+        { q: "Which server does my UID need to be on?", a: "Send diamonds to the UID you specified. Double-check it — diamonds cannot be reversed once sent." },
+      ])
+    );
+    console.log("[db] ✓ Support settings seeded");
+  } else {
+    console.log("[db] ✓ Support settings exist, skipping");
+  }
 
-    // homepage sections
-    db.get("SELECT COUNT(*) c FROM homepage_sections", (e, row) => {
-      if (e) return;
-      if (row.c === 0) {
-        const hero = {
-          heading: "Get Your Free Fire Diamonds Fast ⚡",
-          description: "Buy your diamonds easily with secure bank transfer payment and track your order from start to finish.",
-          button_primary: "BUY DIMES",
-          button_secondary: "TRACK ORDER",
-        };
-        db.run("INSERT INTO homepage_sections (key, value) VALUES ('hero', ?)", JSON.stringify(hero));
-        db.run("INSERT INTO homepage_sections (key, value) VALUES ('announcement_bar', ?)", JSON.stringify({ text: "" }));
-        console.log("[db] ✓ Homepage sections seeded");
-      } else { console.log("[db] ✓ Homepage sections exist, skipping"); }
-    });
+  // homepage sections
+  row = db.prepare("SELECT COUNT(*) c FROM homepage_sections").get();
+  if (row.c === 0) {
+    const hero = {
+      heading: "Get Your Free Fire Diamonds Fast ⚡",
+      description: "Buy your diamonds easily with secure bank transfer payment and track your order from start to finish.",
+      button_primary: "BUY DIMES",
+      button_secondary: "TRACK ORDER",
+    };
+    db.prepare("INSERT INTO homepage_sections (key, value) VALUES ('hero', ?)").run(JSON.stringify(hero));
+    db.prepare("INSERT INTO homepage_sections (key, value) VALUES ('announcement_bar', ?)").run(JSON.stringify({ text: "" }));
+    console.log("[db] ✓ Homepage sections seeded");
+  } else {
+    console.log("[db] ✓ Homepage sections exist, skipping");
+  }
 
-    // site settings
-    db.get("SELECT COUNT(*) c FROM site_settings", (e, row) => {
-      if (e) return;
-      if (row.c === 0) {
-        const sets = [
-          ["store_name", "Naija Dimes Hub"],
-          ["tagline", "Fast. Simple. Reliable."],
-          ["currency", "₦"],
-          ["maintenance_mode", "0"],
-          ["maintenance_message", "We're doing some maintenance. Check back soon!"],
-          ["notif_email", "0"],
-        ];
-        const ins = db.prepare("INSERT INTO site_settings (key, value) VALUES (?,?)");
-        sets.forEach(([k, v]) => ins.run(k, v));
-        console.log("[db] ✓ Site settings seeded");
-      } else { console.log("[db] ✓ Site settings exist, skipping"); }
-    });
+  // site settings
+  row = db.prepare("SELECT COUNT(*) c FROM site_settings").get();
+  if (row.c === 0) {
+    const sets = [
+      ["store_name", "Naija Dimes Hub"],
+      ["tagline", "Fast. Simple. Reliable."],
+      ["currency", "₦"],
+      ["maintenance_mode", "0"],
+      ["maintenance_message", "We're doing some maintenance. Check back soon!"],
+      ["notif_email", "0"],
+    ];
+    const ins = db.prepare("INSERT INTO site_settings (key, value) VALUES (?,?)");
+    sets.forEach(([k, v]) => ins.run(k, v));
+    console.log("[db] ✓ Site settings seeded");
+  } else {
+    console.log("[db] ✓ Site settings exist, skipping");
+  }
 
-    db.get("SELECT COUNT(*) c FROM admins", (e, row) => {
-      if (row.c > 0) console.log("\n[db] ✓ Database ready. Admin:", config.admin.username, "/ pass: " + config.admin.password);
-    });
-  });
+  row = db.prepare("SELECT COUNT(*) c FROM admins").get();
+  if (row.c > 0) console.log("\n[db] ✓ Database ready. Admin:", config.admin.username, "/ pass: " + config.admin.password);
 }
 
-// Auto-init
-db.on("trace", () => {});
-setTimeout(() => {
-  db.close((err) => {
-    if (err) console.error("[db] close error:", err.message);
-  });
-  console.log("[db] ✓ Connection test complete. Run server.js to start the store.");
-}, 3000);
+seed();
 
-module.exports = { db, SCHEMA, run, seed };
+// ── Convenience wrappers (routes call db.all/db.get/db.run directly) ──
+// Routes pass params as an array: db.get(sql, [a, b]) — normalize to spread args.
+const spread = (params) => (params.length === 1 && Array.isArray(params[0]) ? params[0] : params);
+db.all = (sql, ...params) => db.prepare(sql).all(...spread(params));
+db.get = (sql, ...params) => db.prepare(sql).get(...spread(params));
+db.run = (sql, ...params) => db.prepare(sql).run(...spread(params));
+
+module.exports = db;

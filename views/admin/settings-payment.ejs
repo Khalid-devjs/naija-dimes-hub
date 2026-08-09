@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+  <% if (query.msg === 'saved') { %><div class="msg msg-ok">✅ Payment settings saved.</div><% } %>
+  <div class="card" style="max-width:720px;">
+    <form method="POST" action="/admin/settings/payment">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div><label>Bank Name</label><input type="text" name="bank_name" value="<%= settings.bank_name || 'GTBank' %>"></div>
+        <div><label>Account Name</label><input type="text" name="account_name" value="<%= settings.account_name || '' %>"></div>
+        <div><label>Account Number</label><input type="text" name="account_number" value="<%= settings.account_number || '' %>"></div>
+      </div>
+      <label>Reference Note</label>
+      <input type="text" name="reference_note" value="<%= settings.reference_note || '' %>">
+      <label>Instructions</label>
+      <textarea name="instructions" rows="6"><%= settings.instructions || '' %></textarea>
+      <div class="form-row">
+        <div><label>Min Payment (₦)</label><input type="number" name="min_payment" min="0" step="0.01" value="<%= settings.min_payment_kobo ? (settings.min_payment_kobo / 100) : 0 %>"></div>
+        <div><label>Max Screenshot (MB)</label><input type="number" name="max_screenshot_mb" min="1" value="<%= settings.max_screenshot_mb || 5 %>"></div>
+        <div><label>Allowed Formats</label><input type="text" name="allowed_formats" value="<%= settings.allowed_formats || 'jpg,jpeg,png,webp' %>"></div>
+      </div>
+      <button type="submit" class="btn btn-p">Save Settings</button>
+    </form>
+  </div>
+<%- include('partials/foot') %>

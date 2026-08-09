@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+  <div class="card">
+    <% if (banners.length === 0) { %>
+      <p class="muted">No banners yet. Banners are added directly in the database (admin UI coming soon).</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Title</th><th>Active</th><th>Sort</th><th>Starts</th><th>Ends</th></tr></thead>
+        <tbody>
+          <% banners.forEach(b => { %>
+            <tr>
+              <td><%= b.title || '(untitled)' %></td>
+              <td><%= b.active ? '✅' : '❌' %></td>
+              <td><%= b.sort_order %></td>
+              <td><span class="muted"><%= b.start_at || '-' %></span></td>
+              <td><span class="muted"><%= b.end_at || '-' %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>

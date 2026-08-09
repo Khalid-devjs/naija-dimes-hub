@@ -1,0 +1,17 @@
+<%- include('layout') %>
+  <h1>Frequently Asked Questions</h1>
+  <p style="color:var(--muted);">Answers to common questions about buying diamonds.</p>
+
+  <% if (faq.length === 0) { %>
+    <div class="card" style="max-width:700px; margin:0 auto;">
+      <p>No FAQs yet — check back soon!</p>
+    </div>
+  <% } %>
+
+  <% faq.forEach((item, i) => { %>
+    <div class="card" style="max-width:700px; margin:0 auto 1rem;">
+      <h3 style="color:var(--primary);"><%= i + 1 %>. <%= item.q %></h3>
+      <p style="color:var(--muted);"><%= item.a %></p>
+    </div>
+  <% }) %>
+<%- include('partials/footer') %>

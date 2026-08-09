@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%- title %> | <%= site.store_name || 'Naija Dimes Hub' %></title>
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %><%= site.store_name || 'Naija Dimes Hub' %></title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <style>
@@ -103,18 +103,3 @@
 <body>
   <%- include('partials/header') %>
   <main class="container" style="max-width:1200px; margin:0 auto; padding:2rem 1rem;">
-    <%- body %>
-  </main>
-  <%- include('partials/footer') %>
-
-  <% if (session?.admin) { %>
-  <script>
-    window.ADMIN = {
-      id: <%= JSON.stringify(session.admin.id) %>,
-      username: "<%= session.admin.username %>",
-      role: "<%= session.admin.role %>"
-    };
-  </script>
-  <% } %>
-</body>
-</html>

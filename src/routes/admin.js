@@ -66,6 +66,9 @@ router.use(requireAdmin);
 // ── layout data middleware ──
 router.use((req, res, next) => {
   res.locals.admin = req.session.admin;
+  res.locals.reqPath = req.path;
+  res.locals.query = req.query;
+  res.locals.formatNaira = formatNaira;
   if (req.path === "/login" || req.path === "/logout") return next();
   next();
 });
@@ -362,7 +365,12 @@ router.get("/announcements", (req, res) => {
 });
 
 router.get("/announcements/new", (req, res) => {
-  res.render("admin/announcement-form", { a: null, action: "create" });
+  let a = null;
+  if (req.query.id) {
+    a = db.get("SELECT * FROM announcements WHERE id = ?", [req.query.id]);
+    if (!a) return res.status(404).send("Not found");
+  }
+  res.render("admin/announcement-form", { a, action: a ? "edit" : "create" });
 });
 
 router.post("/announcements/save", requireRole("super_admin", "manager"), (req, res) => {

@@ -1,57 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Order Created | Naija Dimes Hub</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-  <%- include('layout') %>
-  <main class="container" style="max-width:800px; margin:0 auto; padding:2rem 1rem;">
-    <div class="timeline">
-      <div class="step done">✓ Select Package</div>
-      <div class="step done">✓ Enter Free Fire UID</div>
-      <div class="step done">✓ Your Information</div>
-      <div class="step done">� ORDER CREATED</div>
-      <div class="step">○ Bank Transfer</div>
-      <div class="step">○ Upload Screenshot</div>
-      <div class="step">○ Admin Approval</div>
+<%- include('layout') %>
+  <div class="timeline">
+    <div class="step done"><span class="check">✓</span><span class="label">Select Package</span></div>
+    <div class="step done"><span class="check">✓</span><span class="label">Enter Free Fire UID</span></div>
+    <div class="step done"><span class="check">✓</span><span class="label">Your Information</span></div>
+    <div class="step done"><span class="check">✓</span><span class="label">ORDER CREATED</span></div>
+    <div class="step"><span class="label">Bank Transfer</span></div>
+    <div class="step"><span class="label">Upload Screenshot</span></div>
+    <div class="step"><span class="label">Admin Approval</span></div>
+  </div>
+  <div class="card" style="text-align:center; background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,200,83,.2));">
+    <h2 style="color:var(--primary);">✓ Order Created</h2>
+    <p style="color:var(--muted);">Your order has been generated. Please complete the payment.</p>
+    <div style="background:#0a0a0a; padding:1.5rem; border-radius:8px; margin:1rem 0;">
+      <p style="margin:0.5rem 0;"><strong>Order ID:</strong> <span style="color:var(--primary); font-family:monospace;"><%= order.code %></span></p>
+      <p style="margin:0.5rem 0;"><strong>Dimes:</strong> <%= order.dimes %></p>
+      <p style="margin:0.5rem 0;"><strong>Amount:</strong> <span style="color:var(--primary); font-size:1.5rem;">₦<%= formatNaira(order.amount) %></span></p>
+      <p style="margin:0.5rem 0;"><strong>Free Fire UID:</strong> <%= order.uid %></p>
+      <p style="margin:0.5rem 0;"><strong>Status:</strong> <span class="status-badge status-pending">Payment Pending</span></p>
     </div>
-    <div class="card" style="text-align:center; background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,200,83,.2));">
-      <h2 style="color:var(--primary);">✓ Order Created</h2>
-      <p style="color:var(--muted);">Your order has been generated. Please complete the payment.</p>
-      <div style="background:#0a0a0a; padding:1.5rem; border-radius:8px; margin:1rem 0;">
-        <p style="margin:0.5rem 0;"><strong>Order ID:</strong> <span style="color:var(--primary); font-family:monospace;"><%= order.code %></span></p>
-        <p style="margin:0.5rem 0;"><strong>Dimes:</strong> <%= order.dimes %></p>
-        <p style="margin:0.5rem 0;"><strong>Amount:</strong> <span style="color:var(--primary); font-size:1.5rem;">₦<%= formatNaira(order.amount) %></span></p>
-        <p style="margin:0.5rem 0;"><strong>Free Fire UID:</strong> <%= order.uid %></p>
-        <p style="margin:0.5rem 0;"><strong>Status:</strong> <span class="status-badge status-pending">Payment Pending</span></p>
-      </div>
+  </div>
+
+  <!-- ===================== BANK TRANSFER ===================== -->
+  <div class="card" style="margin-top:2rem;">
+    <h2 style="color:var(--primary);">Bank Transfer</h2>
+    <p>Use the details below to make your payment. The order will be fulfilled after admin verification.</p>
+
+    <div class="bank-details" style="background:#0a0a0a; padding:1.5rem; border-radius:8px; margin:1rem 0;">
+      <% const ps = paymentSettings || {}; %>
+      <p style="margin:0.5rem 0;"><strong>Bank:</strong> <%= ps.bank_name || 'GTBank' %></p>
+      <p style="margin:0.5rem 0;"><strong>Account Name:</strong> <%= ps.account_name || 'NAIJA DIMES HUB' %></p>
+      <p style="margin:0.5rem 0;"><strong>Account Number:</strong> <span style="color:var(--primary); font-size:1.25rem; font-weight:700;"><%= ps.account_number || '0000000000' %></span></p>
+      <p style="margin:0.5rem 0; color:var(--muted); font-size:.85rem;"><%= ps.reference_note || 'Use your Order ID as the transfer reference' %></p>
     </div>
 
-    <!-- ===================== BANK TRANSFER ===================== -->
-    <div class="card" style="margin-top:2rem;">
-      <h2 style="color:var(--primary);">Bank Transfer</h2>
-      <p>Use the details below to make your payment. The order will be fulfilled after admin verification.</p>
+    <h3 style="margin-top:1.5rem;">Payment Instructions</h3>
+    <ol style="padding-left:1.5rem; line-height:1.6;">
+      <li>Open your banking app.</li>
+      <li>Transfer the exact amount shown: <strong>₦<%= formatNaira(order.amount) %></strong></li>
+      <li>Complete the transaction.</li>
+      <li>Save your payment receipt.</li>
+      <li>Return to Naija Dimes Hub.</li>
+      <li>Upload your payment screenshot.</li>
+      <li>Submit your payment for verification.</li>
+      <li>Wait for admin approval.</li>
+    </ol>
 
-      <%- include('partials/bank-details', { config: require('../config'), db: db }) %>
-
-      <h3 style="margin-top:1.5rem;">Payment Instructions</h3>
-      <ol style="padding-left:1.5rem; line-height:1.6;">
-        <li>Open your banking app.</li>
-        <li>Transfer the exact amount shown: <strong>₦<%= formatNaira(order.amount) %></strong></li>
-        <li>Complete the transaction.</li>
-        <li>Save your payment receipt.</li>
-        <li>Return to Naija Dimes Hub.</li>
-        <li>Upload your payment screenshot.</li>
-        <li>Submit your payment for verification.</li>
-        <li>Wait for admin approval.</li>
-      </ol>
-
-      <button onclick="location.href='/buy/upload/<%= order.id %>'" class="btn btn-block" style="margin-top:1.5rem;">Upload Payment Screenshot</button>
-      <a href="/track" class="btn btn-secondary" style="margin-top:0.5rem; display:block;">Track Order</a>
-    </div>
-  </main>
-</body>
-</html>
+    <button onclick="location.href='/buy/upload/<%= order.id %>'" class="btn btn-block" style="margin-top:1.5rem;">Upload Payment Screenshot</button>
+    <a href="/track" class="btn btn-secondary" style="margin-top:0.5rem; display:block;">Track Order</a>
+  </div>
+<%- include('partials/footer') %>

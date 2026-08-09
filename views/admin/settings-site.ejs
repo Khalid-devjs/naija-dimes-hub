@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+  <% if (query.msg === 'saved') { %><div class="msg msg-ok">✅ Site settings saved.</div><% } %>
+  <div class="card" style="max-width:720px;">
+    <form method="POST" action="/admin/settings/site">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div><label>Store Name</label><input type="text" name="store_name" value="<%= settings.store_name || '' %>"></div>
+        <div><label>Tagline</label><input type="text" name="tagline" value="<%= settings.tagline || '' %>"></div>
+        <div><label>Currency Symbol</label><input type="text" name="currency" value="<%= settings.currency || '₦' %>"></div>
+      </div>
+      <label>Maintenance Message</label>
+      <input type="text" name="maintenance_message" value="<%= settings.maintenance_message || '' %>">
+      <div class="flex" style="margin-bottom:1rem;">
+        <label style="display:flex; align-items:center; gap:.4rem; margin-right:1.5rem;">
+          <input type="checkbox" class="checkbox" name="maintenance_mode" <%= settings.maintenance_mode === '1' ? 'checked' : '' %>> Maintenance Mode
+        </label>
+        <label style="display:flex; align-items:center; gap:.4rem;">
+          <input type="checkbox" class="checkbox" name="notif_email" <%= settings.notif_email === '1' ? 'checked' : '' %>> Email Notifications
+        </label>
+      </div>
+      <button type="submit" class="btn btn-p">Save Settings</button>
+    </form>
+  </div>
+<%- include('partials/foot') %>

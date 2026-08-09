@@ -1,0 +1,38 @@
+<%- include('layout') %>
+  <h1>Track Your Order</h1>
+  <p style="color:var(--muted);">Enter your Order ID to see the current status.</p>
+
+  <% if (error) { %>
+    <div class="card" style="background:rgba(255,0,0,.1); border-color:rgba(255,0,0,.3); margin-bottom:1rem;">
+      <h3 style="color:var(--danger);"><%= error %></h3>
+    </div>
+  <% } %>
+
+  <div class="card glow" style="max-width:600px; margin:0 auto;">
+    <form method="POST" action="/track">
+      <label for="order_code" style="margin-bottom:.5rem; display:block;">Order ID *</label>
+      <input type="text" id="order_code" name="order_code" required placeholder="e.g. NDH-20260809-AB12" style="text-transform:uppercase;">
+      <button type="submit" class="btn btn-block" style="margin-top:1rem;">Track Order</button>
+    </form>
+  </div>
+
+  <% if (order) { %>
+  <div class="card" style="margin-top:2rem; max-width:600px; margin-left:auto; margin-right:auto;">
+    <h2 style="color:var(--primary);">Order <%= order.order_code %></h2>
+    <p><strong>Status:</strong> <span class="status-badge status-<%= String(order.status).toLowerCase() %>"><%= order.status %></span></p>
+    <p><strong>Dimes:</strong> <%= order.package_dimes %> 💎</p>
+    <p><strong>Amount:</strong> ₦<%= formatNaira(order.amount_kobo) %></p>
+    <p><strong>Free Fire UID:</strong> <%= order.freefire_uid %></p>
+    <p><strong>Placed:</strong> <%= order.created_at %></p>
+    <% if (order.status === 'PAYMENT_CONFIRMED' || order.status === 'PROCESSING' || order.status === 'COMPLETED') { %>
+      <p style="color:var(--accent);">✅ Your payment has been confirmed. Delivery is in progress.</p>
+    <% } %>
+    <div class="timeline" style="margin-top:1rem;">
+      <div class="step <%= ['PAYMENT_UNDER_REVIEW','PAYMENT_CONFIRMED','PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Order Created</span></div>
+      <div class="step <%= ['PAYMENT_CONFIRMED','PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Payment Confirmed</span></div>
+      <div class="step <%= ['PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Processing</span></div>
+      <div class="step <%= order.status === 'COMPLETED' ? 'done' : '' %>"><span class="label">Completed</span></div>
+    </div>
+  </div>
+  <% } %>
+<%- include('partials/footer') %>

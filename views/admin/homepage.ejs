@@ -1,0 +1,21 @@
+<%- include('partials/head') %>
+  <% if (query.msg === 'saved') { %><div class="msg msg-ok">✅ Homepage updated.</div><% } %>
+  <div class="card" style="max-width:720px;">
+    <h3 style="margin-top:0;">Hero Section</h3>
+    <form method="POST" action="/admin/homepage">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label>Heading</label>
+      <input type="text" name="hero[heading]" value="<%= hero.heading || '' %>">
+      <label>Description</label>
+      <textarea name="hero[description]" rows="3"><%= hero.description || '' %></textarea>
+      <div class="form-row">
+        <div><label>Primary Button Text</label><input type="text" name="hero[button_primary]" value="<%= hero.button_primary || '' %>"></div>
+        <div><label>Secondary Button Text</label><input type="text" name="hero[button_secondary]" value="<%= hero.button_secondary || '' %>"></div>
+      </div>
+      <h3>Announcement Bar</h3>
+      <label>Announcement Text (leave empty to hide)</label>
+      <input type="text" name="announcement_bar[text]" value="<%= announcementBar.text || '' %>">
+      <button type="submit" class="btn btn-p">Save Homepage</button>
+    </form>
+  </div>
+<%- include('partials/foot') %>

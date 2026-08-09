@@ -1,0 +1,65 @@
+<%- include('partials/head') %>
+  <% if (query.msg === 'status_updated') { %><div class="msg msg-ok">✅ Status updated.</div><% } %>
+
+  <div class="card">
+    <div class="flex" style="justify-content:space-between; margin-bottom:1rem;">
+      <h3 style="margin:0;"><%= order.order_code %></h3>
+      <span class="badge b-<%= order.status.toLowerCase() %>"><%= LABELS[order.status] || order.status %></span>
+    </div>
+    <table>
+      <tbody>
+        <tr><th>Customer</th><td><%= order.customer_name %></td></tr>
+        <tr><th>WhatsApp</th><td><%= order.whatsapp %></td></tr>
+        <tr><th>Email</th><td><%= order.email || '-' %></td></tr>
+        <tr><th>Free Fire UID</th><td><%= order.freefire_uid %> (<%= order.freefire_nick || 'no nick' %>)</td></tr>
+        <tr><th>Package</th><td><%= order.package_dimes %> Dimes</td></tr>
+        <tr><th>Amount</th><td><%= formatNaira(order.amount_kobo) %></td></tr>
+        <tr><th>Note</th><td><%= order.note || '-' %></td></tr>
+        <tr><th>IP</th><td class="muted"><%= order.ip_address || '-' %></td></tr>
+        <tr><th>Created</th><td><%= order.created_at %></td></tr>
+        <tr><th>Reject Reason</th><td><%= order.reject_reason || '-' %></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <% if (payment) { %>
+  <div class="card">
+    <h3 style="margin-top:0;">Payment</h3>
+    <table>
+      <tbody>
+        <tr><th>Ref</th><td><%= payment.transaction_ref %></td></tr>
+        <tr><th>Sender</th><td><%= payment.sender_name || '-' %></td></tr>
+        <tr><th>Amount</th><td><%= formatNaira(payment.amount_kobo) %></td></tr>
+        <tr><th>Status</th><td><%= payment.status %></td></tr>
+        <tr><th>Screenshot</th><td>
+          <% if (payment.screenshot_path) { %>
+            <a href="<%= payment.screenshot_path %>" target="_blank">View</a>
+          <% } else { %>-<% } %>
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+  <% } else { %>
+  <div class="card"><p class="muted">No payment submitted yet.</p></div>
+  <% } %>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Update Status</h3>
+    <form method="POST" action="/admin/orders/<%= order.id %>/status">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div>
+          <label>New status</label>
+          <select name="status">
+            <% Object.keys(LABELS).forEach(s => { %>
+              <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= LABELS[s] %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div><label>Reject reason</label><input type="text" name="reject_reason" placeholder="(for rejections)"></div>
+        <div><label>Internal notes</label><input type="text" name="internal_notes" placeholder="Internal note"></div>
+      </div>
+      <button type="submit" class="btn btn-p">Save Status</button>
+    </form>
+  </div>
+<%- include('partials/foot') %>

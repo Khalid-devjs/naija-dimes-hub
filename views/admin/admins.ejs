@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+  <div class="card">
+    <% if (admins.length === 0) { %>
+      <p class="muted">No admins found.</p>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th>Last Login</th></tr></thead>
+        <tbody>
+          <% admins.forEach(a => { %>
+            <tr>
+              <td><%= a.username %></td>
+              <td><%= a.full_name || '-' %></td>
+              <td><%= a.email || '-' %></td>
+              <td><span class="badge b-<%= a.role === 'super_admin' ? 'confirmed' : 'processing' %>"><%= a.role %></span></td>
+              <td><%= a.active ? '✅' : '❌' %></td>
+              <td><span class="muted"><%= a.last_login_at || 'never' %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+<%- include('partials/foot') %>
