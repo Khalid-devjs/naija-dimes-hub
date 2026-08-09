@@ -88,7 +88,7 @@ app.use((req, res, next) => {
 function csrfGuard(req, res, next) {
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
   const cookie = req.cookies?.csrf_token || req.session?.csrf;
-  const header = req.headers["x-csrf-token"] || req.body._csrf;
+  const header = req.headers["x-csrf-token"] || req.body._csrf || req.query._csrf;
   if (!cookie || !header || cookie !== header) {
     return res.status(403).render("error", { message: "Invalid CSRF token", status: 403 });
   }

@@ -10,6 +10,7 @@
       <p class="muted">Step 1 of 4 — choose the amount of Free Fire Diamonds you want.</p>
     </div>
     <form method="POST" action="/buy">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="pkg-grid">
         <% packages.forEach((p) => { %>
           <% const featured = p.featured || p.badge === 'popular'; %>

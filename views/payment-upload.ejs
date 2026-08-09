@@ -14,7 +14,8 @@
     <div class="card glow">
       <h1 style="text-align:center;">📸 Upload Payment Screenshot</h1>
       <p class="muted" style="text-align:center;">Upload a clear screenshot of your bank transfer.</p>
-      <form method="POST" action="/payment/<%= order.id %>/upload" enctype="multipart/form-data">
+      <form method="POST" action="/payment/<%= order.id %>/upload?_csrf=<%= csrfToken %>" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="order_id" value="<%= order.id %>">
         <label for="screenshot">Payment Screenshot *</label>
         <input type="file" id="screenshot" name="screenshot" accept="image/*" required>

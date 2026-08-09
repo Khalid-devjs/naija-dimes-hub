@@ -15,6 +15,7 @@
       <h1 style="text-align:center;">Enter Your Free Fire UID</h1>
       <p class="muted" style="text-align:center;">You selected: <strong style="color:var(--primary);"><%= package.dimes.toLocaleString() %> Dimes</strong> for <strong style="color:var(--accent);"><%= formatNaira(package.price_kobo) %></strong></p>
       <form method="POST" action="/buy/uid">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="package_id" value="<%= package.id %>">
         <label for="uid">Free Fire UID *</label>
         <input type="text" id="uid" name="uid" required value="<%= uid || '' %>" pattern="\d{5,12}" placeholder="e.g. 1234567890">

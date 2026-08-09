@@ -11,6 +11,7 @@
 
     <div class="card glow">
       <form method="POST" action="/track">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <label for="order_code">Order ID *</label>
         <input type="text" id="order_code" name="order_code" required placeholder="e.g. NDH-20260809-A82F" style="text-transform:uppercase;">
         <button type="submit" class="btn btn-lg btn-block">🔍 Track Order</button>

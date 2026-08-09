@@ -15,6 +15,7 @@
       <h1 style="text-align:center;">Your Information</h1>
       <p class="muted" style="text-align:center;">So we can contact you about your order.</p>
       <form method="POST" action="/buy/info">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="package_id" value="<%= package.id %>">
         <input type="hidden" name="uid" value="<%= uid %>">
         <input type="hidden" name="nick" value="<%= nick %>">
