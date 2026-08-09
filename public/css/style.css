@@ -276,17 +276,59 @@ tr:last-child td { border-bottom: none; }
 .empty .empty-ic { font-size: 3.5rem; margin-bottom: 1rem; opacity: .6; }
 
 /* ============ Responsive ============ */
+/* Mobile bottom nav — iOS-style tab bar, only on small screens */
+.bottom-nav {
+  display: none;
+}
 @media (max-width: 860px) {
   .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6,9,19,.97); padding: 1rem 4%; border-bottom: 1px solid var(--border); gap: 1rem; align-items: flex-start; }
   .nav-links.open { display: flex; }
   .nav-toggle { display: block; }
-  .hero { padding: 3.5rem 1rem 3rem; }
+  .hero { padding: 3rem 1rem 2.5rem; }
   .section { padding: 2.5rem 0; }
   .card { padding: 1.25rem; }
+  /* bottom tab bar */
+  body { padding-bottom: 68px; }
+  .bottom-nav {
+    display: flex;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+    background: rgba(8,12,24,.92);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -8px 30px rgba(0,0,0,.45);
+    padding: .4rem 0 calc(.4rem + env(safe-area-inset-bottom));
+    justify-content: space-around;
+    align-items: center;
+  }
+  .bottom-nav a {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: var(--muted); font-size: .66rem; font-weight: 700;
+    padding: .45rem .6rem; min-width: 58px; border-radius: 12px;
+    letter-spacing: .02em;
+  }
+  .bottom-nav a .bn-ic { font-size: 1.3rem; line-height: 1; }
+  .bottom-nav a.active { color: var(--primary); }
+  .bottom-nav a.active .bn-ic { filter: drop-shadow(0 0 8px rgba(0,212,255,.8)); }
+  .bottom-nav a:active { background: rgba(0,212,255,.1); }
+  /* hero buttons full width on mobile */
+  .hero .hero-btns { flex-direction: column; align-items: center; gap: .75rem; max-width: 340px; margin: 0 auto; }
+  .hero .hero-btns .btn { width: 100%; }
 }
 @media (max-width: 480px) {
   .btn-lg { padding: .95rem 1.6rem; }
-  .pkg-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .8rem; }
-  .pkg-card .dimes { font-size: 1.5rem; }
-  .pkg-card { padding: 1.4rem .9rem; }
+  .pkg-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .7rem; }
+  .pkg-card .dimes { font-size: 1.35rem; }
+  .pkg-card { padding: 1.25rem .75rem; }
+  .pkg-card .price { font-size: 1.1rem; }
+  .pkg-card .pkg-badge { top: 8px; right: 8px; font-size: .62rem; padding: .22rem .5rem; }
+  .bottom-nav a { font-size: .6rem; min-width: 52px; }
+  .bottom-nav a .bn-ic { font-size: 1.2rem; }
+  .hero h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+  .hero .hero-desc { font-size: .95rem; }
+}
+/* small phones */
+@media (max-width: 360px) {
+  .pkg-grid { grid-template-columns: 1fr 1fr; gap: .55rem; }
+  .pkg-card .dimes { font-size: 1.2rem; }
+  .nav-logo { font-size: 1.05rem; }
 }

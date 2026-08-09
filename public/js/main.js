@@ -15,6 +15,13 @@
     toggle.addEventListener('click', function () { links.classList.toggle('open'); });
   }
 
+  // bottom nav: highlight active tab
+  var path = window.location.pathname;
+  document.querySelectorAll('.bottom-nav a').forEach(function (a) {
+    var target = a.getAttribute('data-nav');
+    if (target === '/' ? path === '/' : path.indexOf(target) === 0) a.classList.add('active');
+  });
+
   // FAQ accordion
   document.querySelectorAll('.faq-q').forEach(function (q) {
     q.addEventListener('click', function () {
