@@ -1,51 +1,53 @@
 <%- include('layout') %>
-  <div class="timeline">
-    <div class="step done"><span class="check">✓</span><span class="label">Select Package</span></div>
-    <div class="step done"><span class="check">✓</span><span class="label">Enter Free Fire UID</span></div>
-    <div class="step done"><span class="check">✓</span><span class="label">Your Information</span></div>
-    <div class="step done"><span class="check">✓</span><span class="label">ORDER CREATED</span></div>
-    <div class="step"><span class="label">Bank Transfer</span></div>
-    <div class="step"><span class="label">Upload Screenshot</span></div>
-    <div class="step"><span class="label">Admin Approval</span></div>
-  </div>
-  <div class="card" style="text-align:center; background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,200,83,.2));">
-    <h2 style="color:var(--primary);">✓ Order Created</h2>
-    <p style="color:var(--muted);">Your order has been generated. Please complete the payment.</p>
-    <div style="background:#0a0a0a; padding:1.5rem; border-radius:8px; margin:1rem 0;">
-      <p style="margin:0.5rem 0;"><strong>Order ID:</strong> <span style="color:var(--primary); font-family:monospace;"><%= order.code %></span></p>
-      <p style="margin:0.5rem 0;"><strong>Dimes:</strong> <%= order.dimes %></p>
-      <p style="margin:0.5rem 0;"><strong>Amount:</strong> <span style="color:var(--primary); font-size:1.5rem;">₦<%= formatNaira(order.amount) %></span></p>
-      <p style="margin:0.5rem 0;"><strong>Free Fire UID:</strong> <%= order.uid %></p>
-      <p style="margin:0.5rem 0;"><strong>Status:</strong> <span class="status-badge status-pending">Payment Pending</span></p>
-    </div>
-  </div>
-
-  <!-- ===================== BANK TRANSFER ===================== -->
-  <div class="card" style="margin-top:2rem;">
-    <h2 style="color:var(--primary);">Bank Transfer</h2>
-    <p>Use the details below to make your payment. The order will be fulfilled after admin verification.</p>
-
-    <div class="bank-details" style="background:#0a0a0a; padding:1.5rem; border-radius:8px; margin:1rem 0;">
-      <% const ps = paymentSettings || {}; %>
-      <p style="margin:0.5rem 0;"><strong>Bank:</strong> <%= ps.bank_name || 'GTBank' %></p>
-      <p style="margin:0.5rem 0;"><strong>Account Name:</strong> <%= ps.account_name || 'NAIJA DIMES HUB' %></p>
-      <p style="margin:0.5rem 0;"><strong>Account Number:</strong> <span style="color:var(--primary); font-size:1.25rem; font-weight:700;"><%= ps.account_number || '0000000000' %></span></p>
-      <p style="margin:0.5rem 0; color:var(--muted); font-size:.85rem;"><%= ps.reference_note || 'Use your Order ID as the transfer reference' %></p>
+  <section class="container section" style="max-width:760px;">
+    <div class="timeline mb-3">
+      <div class="step done"><span class="check">✓</span><span class="label">Select Package</span></div>
+      <div class="step done"><span class="check">✓</span><span class="label">Enter Free Fire UID</span></div>
+      <div class="step done"><span class="check">✓</span><span class="label">Your Information</span></div>
+      <div class="step done"><span class="check">✓</span><span class="label">ORDER CREATED</span></div>
     </div>
 
-    <h3 style="margin-top:1.5rem;">Payment Instructions</h3>
-    <ol style="padding-left:1.5rem; line-height:1.6;">
-      <li>Open your banking app.</li>
-      <li>Transfer the exact amount shown: <strong>₦<%= formatNaira(order.amount) %></strong></li>
-      <li>Complete the transaction.</li>
-      <li>Save your payment receipt.</li>
-      <li>Return to Naija Dimes Hub.</li>
-      <li>Upload your payment screenshot.</li>
-      <li>Submit your payment for verification.</li>
-      <li>Wait for admin approval.</li>
-    </ol>
+    <div class="card text-center" style="background:linear-gradient(135deg, rgba(0,212,255,.12), rgba(0,255,136,.16));">
+      <h2 style="color:var(--accent);">✅ Order Created</h2>
+      <p class="muted">Your order has been generated. Complete the payment below to proceed.</p>
+      <div style="background:rgba(0,0,0,.35); padding:1.5rem; border-radius:12px; margin:1rem 0;">
+        <p><strong>Order ID:</strong> <span style="color:var(--primary); font-family:monospace; font-size:1.1rem;"><%= order.code %></span>
+          <button class="btn btn-ghost btn-sm" data-copy="<%= order.code %>" style="margin-left:.5rem;">📋 Copy</button>
+        </p>
+        <p><strong>Dimes:</strong> <%= order.dimes.toLocaleString() %></p>
+        <p><strong>Amount:</strong> <span style="color:var(--accent); font-size:1.6rem; font-weight:800;"><%= formatNaira(order.amount) %></span>
+          <button class="btn btn-ghost btn-sm" data-copy="<%= formatNaira(order.amount) %>">📋 Copy</button>
+        </p>
+        <p><strong>Free Fire UID:</strong> <%= order.uid %></p>
+        <p><strong>Status:</strong> <span class="status-badge st-pending">🔴 Payment Pending</span></p>
+      </div>
+    </div>
 
-    <button onclick="location.href='/buy/upload/<%= order.id %>'" class="btn btn-block" style="margin-top:1.5rem;">Upload Payment Screenshot</button>
-    <a href="/track" class="btn btn-secondary" style="margin-top:0.5rem; display:block;">Track Order</a>
-  </div>
+    <div class="card mt-3">
+      <h2 style="color:var(--primary);">🏦 Bank Transfer</h2>
+      <p class="muted">Transfer the exact amount to the account below, then upload your receipt.</p>
+      <div style="background:rgba(0,0,0,.35); padding:1.25rem; border-radius:12px; margin:1rem 0;">
+        <% const ps = paymentSettings || {}; %>
+        <p><strong>Bank:</strong> <%= ps.bank_name || 'GTBank' %></p>
+        <p><strong>Account Name:</strong> <%= ps.account_name || 'NAIJA DIMES HUB' %></p>
+        <div class="copy-row"><span class="val"><%= ps.account_number || '0000000000' %></span>
+          <button class="btn btn-accent btn-sm copy-btn" data-copy="<%= ps.account_number || '0000000000' %>">📋 Copy</button>
+        </div>
+        <p class="muted" style="font-size:.85rem;"><%= ps.reference_note || 'Use your Order ID as the transfer reference' %></p>
+      </div>
+      <h3>Payment Instructions</h3>
+      <ol class="muted" style="padding-left:1.4rem; line-height:2;">
+        <li>Open your banking app.</li>
+        <li>Transfer the exact amount shown: <strong style="color:var(--text);"><%= formatNaira(order.amount) %></strong></li>
+        <li>Complete the transaction.</li>
+        <li>Save your payment receipt.</li>
+        <li>Return to Naija Dimes Hub.</li>
+        <li>Upload your payment screenshot.</li>
+        <li>Submit your payment for verification.</li>
+        <li>Wait for admin approval.</li>
+      </ol>
+      <a href="/buy/upload/<%= order.id %>" class="btn btn-lg btn-block mt-2">📸 Upload Payment Screenshot</a>
+      <a href="/track" class="btn btn-ghost btn-block mt-1">Track Order</a>
+    </div>
+  </section>
 <%- include('partials/footer') %>

@@ -1,15 +1,14 @@
   </main>
-  <footer style="text-align:center; padding:2rem 1rem; color:var(--muted); border-top:1px solid rgba(255,255,255,.08);">
-    © <%= new Date().getFullYear() %> Naija Dimes Hub — Fast. Simple. Reliable.
+  <footer class="footer">
+    <div class="ft-links">
+      <a href="/">Home</a>
+      <a href="/buy">Buy Dimes</a>
+      <a href="/track">Track Order</a>
+      <a href="/faq">FAQ</a>
+      <a href="/support">Support</a>
+    </div>
+    <div class="copy">© <%= new Date().getFullYear() %> Naija Dimes Hub — Fast. Simple. Reliable. ⚡💎</div>
   </footer>
-  <% if (typeof session !== 'undefined' && session && session.admin) { %>
-  <script>
-    window.ADMIN = {
-      id: <%= JSON.stringify(session.admin.id) %>,
-      username: "<%= session.admin.username %>",
-      role: "<%= session.admin.role %>"
-    };
-  </script>
-  <% } %>
+  <script src="/js/main.js"></script>
 </body>
 </html>

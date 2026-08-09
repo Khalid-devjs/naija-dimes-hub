@@ -1,38 +1,54 @@
 <%- include('layout') %>
-  <h1>Track Your Order</h1>
-  <p style="color:var(--muted);">Enter your Order ID to see the current status.</p>
+  <section class="container section" style="max-width:680px;">
+    <h1 class="text-center">📍 <span class="grad-text">Track Your Order</span></h1>
+    <p class="text-center muted mb-3">Enter your Order ID (e.g. NDH-20260809-A82F) to see its status.</p>
 
-  <% if (error) { %>
-    <div class="card" style="background:rgba(255,0,0,.1); border-color:rgba(255,0,0,.3); margin-bottom:1rem;">
-      <h3 style="color:var(--danger);"><%= error %></h3>
-    </div>
-  <% } %>
-
-  <div class="card glow" style="max-width:600px; margin:0 auto;">
-    <form method="POST" action="/track">
-      <label for="order_code" style="margin-bottom:.5rem; display:block;">Order ID *</label>
-      <input type="text" id="order_code" name="order_code" required placeholder="e.g. NDH-20260809-AB12" style="text-transform:uppercase;">
-      <button type="submit" class="btn btn-block" style="margin-top:1rem;">Track Order</button>
-    </form>
-  </div>
-
-  <% if (order) { %>
-  <div class="card" style="margin-top:2rem; max-width:600px; margin-left:auto; margin-right:auto;">
-    <h2 style="color:var(--primary);">Order <%= order.order_code %></h2>
-    <p><strong>Status:</strong> <span class="status-badge status-<%= String(order.status).toLowerCase() %>"><%= order.status %></span></p>
-    <p><strong>Dimes:</strong> <%= order.package_dimes %> 💎</p>
-    <p><strong>Amount:</strong> ₦<%= formatNaira(order.amount_kobo) %></p>
-    <p><strong>Free Fire UID:</strong> <%= order.freefire_uid %></p>
-    <p><strong>Placed:</strong> <%= order.created_at %></p>
-    <% if (order.status === 'PAYMENT_CONFIRMED' || order.status === 'PROCESSING' || order.status === 'COMPLETED') { %>
-      <p style="color:var(--accent);">✅ Your payment has been confirmed. Delivery is in progress.</p>
+    <% if (error) { %>
+      <div class="card" style="background:rgba(255,71,87,.1); border-color:rgba(255,71,87,.4); margin-bottom:1rem;">
+        <h3 style="color:var(--danger);">⚠️ <%= error %></h3>
+      </div>
     <% } %>
-    <div class="timeline" style="margin-top:1rem;">
-      <div class="step <%= ['PAYMENT_UNDER_REVIEW','PAYMENT_CONFIRMED','PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Order Created</span></div>
-      <div class="step <%= ['PAYMENT_CONFIRMED','PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Payment Confirmed</span></div>
-      <div class="step <%= ['PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Processing</span></div>
-      <div class="step <%= order.status === 'COMPLETED' ? 'done' : '' %>"><span class="label">Completed</span></div>
+
+    <div class="card glow">
+      <form method="POST" action="/track">
+        <label for="order_code">Order ID *</label>
+        <input type="text" id="order_code" name="order_code" required placeholder="e.g. NDH-20260809-A82F" style="text-transform:uppercase;">
+        <button type="submit" class="btn btn-lg btn-block">🔍 Track Order</button>
+      </form>
     </div>
-  </div>
-  <% } %>
+
+    <% if (order) { %>
+    <div class="card mt-3">
+      <div class="flex between" style="align-items:center;">
+        <h2 style="color:var(--primary);">Order <%= order.order_code %></h2>
+        <span class="status-badge st-<%= order.status.toLowerCase().replace('payment_','') %>"><%= LABELS[order.status] || order.status %></span>
+      </div>
+      <div class="grid-2 muted" style="font-size:.92rem;">
+        <p><strong style="color:var(--text);">Dimes:</strong> <%= order.package_dimes.toLocaleString() %> 💎</p>
+        <p><strong style="color:var(--text);">Amount:</strong> <span style="color:var(--accent); font-weight:800;"><%= formatNaira(order.amount_kobo) %></span></p>
+        <p><strong style="color:var(--text);">Free Fire UID:</strong> <%= order.freefire_uid %></p>
+        <p><strong style="color:var(--text);">Placed:</strong> <%= order.created_at %></p>
+      </div>
+      <h3 class="mt-2">Order Timeline</h3>
+      <div class="timeline">
+        <div class="step done"><span class="check">✓</span><span class="label">Order Created</span></div>
+        <div class="step <%= ['PAYMENT_UNDER_REVIEW','PAYMENT_CONFIRMED','PROCESSING','COMPLETED'].includes(order.status) ? 'done' : order.status === 'PAYMENT_REJECTED' ? 'rejected' : 'active' %>"><span class="label"><%= order.status === 'PENDING_PAYMENT' ? 'Awaiting Payment' : 'Payment Submitted' %></span></div>
+        <div class="step <%= ['PAYMENT_CONFIRMED','PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Payment Confirmed</span></div>
+        <div class="step <%= ['PROCESSING','COMPLETED'].includes(order.status) ? 'done' : '' %>"><span class="label">Processing</span></div>
+        <div class="step <%= order.status === 'COMPLETED' ? 'done' : '' %>"><span class="label">Completed</span></div>
+      </div>
+      <% if (order.reject_reason) { %>
+        <div class="card mt-2" style="background:rgba(255,71,87,.1); border-color:rgba(255,71,87,.4);">
+          <h3 style="color:var(--danger);">❌ Payment Rejected</h3>
+          <p>Reason: <%= order.reject_reason %></p>
+        </div>
+      <% } %>
+      <% if (order.status === 'COMPLETED') { %>
+        <div class="card mt-2" style="background:rgba(0,255,136,.1); border-color:rgba(0,255,136,.4); text-align:center;">
+          <h3 style="color:var(--accent);">🎉 Your order has been completed!</h3>
+        </div>
+      <% } %>
+    </div>
+    <% } %>
+  </section>
 <%- include('partials/footer') %>

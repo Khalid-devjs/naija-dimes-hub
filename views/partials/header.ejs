@@ -1,14 +1,16 @@
-<nav class="navbar glass glow" style="padding:1rem; position:sticky; top:0; z-index:1000;">
-  <div class="flex flex-center">
-    <a href="/" style="font-size:1.5rem; font-weight:700; color:var(--primary); text-decoration:none;">Naija Dimes Hub</a>
-    <div class="flex" style="margin-left:auto; gap:1.5rem;">
-      <% if (typeof user === 'undefined' || !user) { %>
-        <a href="/login" class="btn btn-secondary">Login</a>
-        <a href="/register" class="btn">Register</a>
-      <% } else { %>
-        <span style="color:var(--muted);">Welcome, <%= user.full_name || user.username %></span>
-        <a href="/logout" class="btn btn-danger">Logout</a>
-      <% } %>
+<div id="loader"><div><div class="loader-diamond">💎</div><div class="loader-text">Naija Dimes Hub</div></div></div>
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="nav-logo"><span class="logo-ic">💎</span> Naija Dimes Hub</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/buy">Buy Dimes</a>
+      <a href="/packages">Packages</a>
+      <a href="/track">Track Order</a>
+      <a href="/faq">FAQ</a>
+      <a href="/support">Support</a>
+      <a href="/admin/login" class="btn btn-ghost btn-sm">Admin</a>
     </div>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
   </div>
 </nav>

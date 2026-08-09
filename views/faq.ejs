@@ -1,17 +1,15 @@
 <%- include('layout') %>
-  <h1>Frequently Asked Questions</h1>
-  <p style="color:var(--muted);">Answers to common questions about buying diamonds.</p>
-
-  <% if (faq.length === 0) { %>
-    <div class="card" style="max-width:700px; margin:0 auto;">
-      <p>No FAQs yet — check back soon!</p>
-    </div>
-  <% } %>
-
-  <% faq.forEach((item, i) => { %>
-    <div class="card" style="max-width:700px; margin:0 auto 1rem;">
-      <h3 style="color:var(--primary);"><%= i + 1 %>. <%= item.q %></h3>
-      <p style="color:var(--muted);"><%= item.a %></p>
-    </div>
-  <% }) %>
+  <section class="container section" style="max-width:720px;">
+    <h1 class="text-center">❓ <span class="grad-text">Frequently Asked Questions</span></h1>
+    <p class="text-center muted mb-3">Quick answers to common questions.</p>
+    <% if (faq.length === 0) { %>
+      <div class="empty"><div class="empty-ic">💬</div><p>No FAQs yet — check back soon!</p></div>
+    <% } %>
+    <% faq.forEach((item, i) => { %>
+      <div class="faq-item">
+        <div class="faq-q"><span><%= i + 1 %>. <%= item.q %></span><span class="ic">+</span></div>
+        <div class="faq-a"><p><%= item.a %></p></div>
+      </div>
+    <% }) %>
+  </section>
 <%- include('partials/footer') %>

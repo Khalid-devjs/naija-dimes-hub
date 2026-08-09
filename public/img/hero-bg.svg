@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#00d4ff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#00ff88" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00d4ff"/>
+      <stop offset="1" stop-color="#00ff88"/>
+    </linearGradient>
+  </defs>
+  <rect width="1440" height="600" fill="#060913"/>
+  <circle cx="300" cy="200" r="280" fill="url(#g1)"/>
+  <circle cx="1150" cy="300" r="320" fill="url(#g2)"/>
+  <circle cx="750" cy="80" r="200" fill="url(#g1)" opacity="0.6"/>
+
+  <g opacity="0.35">
+    <path d="M180 120 L230 170 L180 220 L130 170 Z" fill="url(#dg)"/>
+    <path d="M380 420 L420 460 L380 500 L340 460 Z" fill="url(#dg)"/>
+    <path d="M1250 140 L1290 180 L1250 220 L1210 180 Z" fill="url(#dg)"/>
+    <path d="M1050 450 L1090 490 L1050 530 L1010 490 Z" fill="url(#dg)"/>
+    <path d="M700 480 L730 510 L700 540 L670 510 Z" fill="url(#dg)" opacity="0.6"/>
+    <path d="M920 90 L950 120 L920 150 L890 120 Z" fill="url(#dg)" opacity="0.7"/>
+  </g>
+
+  <g opacity="0.15">
+    <path d="M80 350 L110 380 L80 410 L50 380 Z" fill="#fff"/>
+    <path d="M1350 350 L1380 380 L1350 410 L1320 380 Z" fill="#fff"/>
+    <path d="M600 60 L625 85 L600 110 L575 85 Z" fill="#fff"/>
+  </g>
+</svg>

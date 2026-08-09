@@ -18,6 +18,14 @@ router.use((req, res, next) => {
   res.locals.packages = packages;
   res.locals.announcement = announcement;
   res.locals.site = site;
+  let hero = {};
+  try { hero = JSON.parse(db.get("SELECT value FROM homepage_sections WHERE key = 'hero'")?.value || "{}"); } catch (_) {}
+  let annBar = {};
+  try { annBar = JSON.parse(db.get("SELECT value FROM homepage_sections WHERE key = 'announcement_bar'")?.value || "{}"); } catch (_) {}
+  res.locals.hero = hero;
+  res.locals.annBar = annBar;
+  res.locals.testimonials = db.all("SELECT * FROM testimonials WHERE active = 1 ORDER BY created_at DESC LIMIT 6");
+  res.locals.banners = db.all("SELECT * FROM banners WHERE active = 1 AND (start_at IS NULL OR start_at <= datetime('now')) AND (end_at IS NULL OR end_at >= datetime('now')) ORDER BY sort_order");
   res.locals.formatNaira = formatNaira;
   res.locals.formatNairaShort = formatNairaShort;
   res.locals.koboToNaira = koboToNaira;
