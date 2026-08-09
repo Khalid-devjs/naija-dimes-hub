@@ -95,7 +95,8 @@ router.post("/buy/info", (req, res) => {
   if (!name || name.length < 2) {
     return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Please enter your full name", name, whatsapp, email, note });
   }
-  if (!/^[\\+]?[(]?[0-9]{3}[)]?[-\\s.]*[0-9]{3}[-\\s.]*[0-9]{4,6}$/.test(whatsapp)) {
+  const waDigits = (whatsapp.match(/\d/g) || []).join("");
+  if (waDigits.length < 7 || waDigits.length > 15) {
     return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Enter a valid WhatsApp number", name, whatsapp, email, note });
   }
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
