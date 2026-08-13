@@ -254,14 +254,20 @@ function seed() {
     });
     console.log("[db] ✓ 11 Free Fire packages seeded (editable in admin)");
 
-    // Blood Strike starter packs
-    const bsPacks = [[100, 300000], [500, 1200000], [1200, 2500000]];
-    bsPacks.forEach(([dimes, price], i) => {
-      const badge = dimes === 500 ? "best_value" : "";
-      const featured = dimes === 500 ? 1 : 0;
-      ins.run("bloodstrike", "", "", dimes, price, null, badge, featured, i + 1);
+    // Blood Strike — two sections: Gold + Passes
+    const bsItems = [
+      // section, title, gold, price₦, old₦, badge, featured
+      ["Gold", "", 100, 750, 1500, "", 0],
+      ["Gold", "", 500, 3750, 7500, "popular", 1],
+      ["Gold", "", 1000, 7500, 15000, "best_value", 1],
+      ["Gold", "", 2000, 15000, 30000, "", 0],
+      ["Passes", "Level-Up Pass", 0, 1500, 3000, "", 0],
+      ["Passes", "Strike Pass Elite", 0, 3000, 6000, "popular", 0],
+    ];
+    bsItems.forEach(([section, title, dimes, price, old, badge, featured], i) => {
+      ins.run("bloodstrike", section, title, dimes, price * 100, old * 100, badge, featured, i + 1);
     });
-    console.log("[db] ✓ Blood Strike packages seeded");
+    console.log("[db] ✓ Blood Strike packages seeded (Gold + Passes)");
 
     // Call of Duty Mobile starter packs
     const codmPacks = [
