@@ -9,24 +9,31 @@
     <% if (packages.length === 0) { %>
       <div class="empty"><div class="empty-ic"><%= game.emoji %></div><p>Packages for <%= game.name %> are coming soon!</p>
       <a href="/" class="btn btn-sec">← Back to games</a></div>
-    <% } else { %>
-      <h2 class="text-center mb-3" style="color:<%= game.color %>;">🛒 <%= game.name %> Store</h2>
-      <p class="text-center muted mb-3">Choose your package — pay by bank transfer, upload proof, get your items.</p>
+    <% } else {
+         const sections = game.sections && game.sections.length ? game.sections : [""];
+         sections.forEach((section) => {
+           const secPkgs = section ? packages.filter((p) => p.section === section) : packages.filter((p) => !p.section);
+           if (secPkgs.length === 0) return;
+    %>
+      <% if (section) { %><h3 class="store-section-title" style="color:<%= game.color %>;"><%= section %></h3><% } %>
       <div class="pkg-grid">
-        <% packages.forEach((p) => { %>
+        <% secPkgs.forEach((p) => { %>
           <% const featured = p.featured || p.badge === 'popular'; %>
           <div class="pkg-card <%= featured ? 'featured' : '' %>" style="--game-color:<%= game.color %>;">
             <% if (p.badge) { %>
               <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= badgeLabel(p.badge) %></span>
             <% } %>
+            <% if (p.title) { %>
+              <div class="pkg-title"><%= p.title %></div>
+            <% } %>
             <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> <%= game.unitLabel %></div>
             <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>
             <div class="price"><%= formatNaira(p.price_kobo) %></div>
-            <a href="/buy?game=<%= game.slug %>&package_id=<%= p.id %>" class="btn btn-block buy-btn" style="--game-color:<%= game.color %>;"><%= p.badge === 'promo' ? '🎁 Grab Deal' : 'ORDER NOW' %></a>
+            <a href="/buy?game=<%= game.slug %>&package_id=<%= p.id %>" class="btn btn-block buy-btn" style="--game-color:<%= game.color %>;"><%= p.badge === 'promo' || p.badge === 'mega' ? '🎁 Grab Deal' : 'ORDER NOW' %></a>
           </div>
         <% }) %>
       </div>
-    <% } %>
+    <% }); } %>
 
     <div class="store-foot-note">
       <p class="muted" style="font-size:.85rem;">ℹ️ For <%= game.name %>, we only need your <strong><%= game.accountLabel %></strong>. <%= game.passwordNotice %></p>

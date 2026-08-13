@@ -174,6 +174,10 @@ label { display: block; font-size: .85rem; font-weight: 600; color: var(--muted)
 .buy-btn { --game-color: var(--primary); background: var(--game-color); color: #04120c; font-weight: 800; border: none; }
 .buy-btn:hover { box-shadow: 0 10px 30px color-mix(in srgb, var(--game-color) 40%, transparent); transform: translateY(-2px); }
 
+/* package title (named items like passes) + store section headers */
+.pkg-title { font-weight: 800; color: #fff; font-size: 1.05rem; margin-bottom: .25rem; }
+.store-section-title { margin: 2rem 0 .75rem; font-size: 1.3rem; font-weight: 800; letter-spacing: .5px; }
+
 
 .navbar {
   position: sticky; top: 0; z-index: 100;

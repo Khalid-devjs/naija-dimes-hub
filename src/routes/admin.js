@@ -255,16 +255,18 @@ router.post("/packages/save", requireRole("super_admin", "manager"), (req, res) 
   const priceKobo = toKobo(parseFloat(p.price));
   const oldKobo = p.old_price ? toKobo(parseFloat(p.old_price)) : null;
   const game = p.game || "freefire";
+  const section = p.section || "";
+  const title = p.title || "";
   if (p.id) {
     db.run(
-      "UPDATE diamond_packages SET game=?, dimes=?, price_kobo=?, old_price_kobo=?, badge=?, active=?, featured=?, sort_order=?, updated_at=datetime('now') WHERE id=?",
-      game, parseInt(p.dimes), priceKobo, oldKobo, p.badge || "", p.active ? 1 : 0, p.featured ? 1 : 0, parseInt(p.sort_order) || 0, p.id
+      "UPDATE diamond_packages SET game=?, section=?, title=?, dimes=?, price_kobo=?, old_price_kobo=?, badge=?, active=?, featured=?, sort_order=?, updated_at=datetime('now') WHERE id=?",
+      game, section, title, parseInt(p.dimes) || 0, priceKobo, oldKobo, p.badge || "", p.active ? 1 : 0, p.featured ? 1 : 0, parseInt(p.sort_order) || 0, p.id
     );
     auditFrom(req, "package_edited", "diamond_packages", p.id, `game=${game}, dimes=${p.dimes}, price=${priceKobo}`);
   } else {
     db.run(
-      "INSERT INTO diamond_packages (game, dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,?,?,?,?)",
-      game, parseInt(p.dimes), priceKobo, oldKobo, p.badge || "", p.active ? 1 : 0, p.featured ? 1 : 0, parseInt(p.sort_order) || 0
+      "INSERT INTO diamond_packages (game, section, title, dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,?,?,?,?,?,?)",
+      game, section, title, parseInt(p.dimes) || 0, priceKobo, oldKobo, p.badge || "", p.active ? 1 : 0, p.featured ? 1 : 0, parseInt(p.sort_order) || 0
     );
     auditFrom(req, "package_created", "diamond_packages", "", `game=${game}, dimes=${p.dimes}, price=${priceKobo}`);
   }

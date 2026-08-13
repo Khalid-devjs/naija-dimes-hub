@@ -43,6 +43,8 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE TABLE IF NOT EXISTS diamond_packages (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   game         TEXT NOT NULL DEFAULT 'freefire',
+  section      TEXT DEFAULT '',
+  title        TEXT DEFAULT '',
   dimes        INTEGER NOT NULL,
   price_kobo   INTEGER NOT NULL,
   old_price_kobo INTEGER,
@@ -242,13 +244,13 @@ function seed() {
       [50000, 25000000], [75000, 37500000], [100000, 50000000],
     ];
     const ins = db.prepare(
-      "INSERT INTO diamond_packages (game, dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,?,1,?,?)"
+      "INSERT INTO diamond_packages (game, section, title, dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,?,?,?,1,?,?)"
     );
     packs.forEach(([dimes, price], i) => {
       const badge = dimes === 1000 ? "popular" : dimes === 5000 ? "best_value" : dimes === 100000 ? "promo" : "";
       const featured = dimes === 1000 || dimes === 5000 || dimes === 10000 ? 1 : 0;
       const old = dimes === 1000 ? 550000 : dimes === 2000 ? 1100000 : null;
-      ins.run("freefire", dimes, price, old, badge, featured, i + 1);
+      ins.run("freefire", "", "", dimes, price, old, badge, featured, i + 1);
     });
     console.log("[db] ✓ 11 Free Fire packages seeded (editable in admin)");
 
@@ -257,7 +259,7 @@ function seed() {
     bsPacks.forEach(([dimes, price], i) => {
       const badge = dimes === 500 ? "best_value" : "";
       const featured = dimes === 500 ? 1 : 0;
-      ins.run("bloodstrike", dimes, price, null, badge, featured, i + 1);
+      ins.run("bloodstrike", "", "", dimes, price, null, badge, featured, i + 1);
     });
     console.log("[db] ✓ Blood Strike packages seeded");
 
@@ -271,7 +273,7 @@ function seed() {
       const badge = codmBadge[dimes] || "";
       const featured = [460, 960, 5400, 58000].includes(dimes) ? 1 : 0;
       const old = Math.round(price * 2); // 50% OFF shown on source
-      ins.run("codm", dimes, price * 100, old * 100, badge, featured, i + 1);
+      ins.run("codm", "", "", dimes, price * 100, old * 100, badge, featured, i + 1);
     });
     console.log("[db] ✓ Call of Duty Mobile packages seeded (10 CP tiers)");
 
@@ -280,18 +282,24 @@ function seed() {
     madPacks.forEach(([dimes, price], i) => {
       const badge = dimes === 25000 ? "best_value" : "";
       const featured = dimes === 25000 ? 1 : 0;
-      ins.run("madout2", dimes, price, null, badge, featured, i + 1);
+      ins.run("madout2", "", "", dimes, price, null, badge, featured, i + 1);
     });
     console.log("[db] ✓ MadOut2 packages seeded");
 
-    // OneState RP starter packs
-    const osPacks = [[1000, 400000], [5000, 1800000], [20000, 6500000]];
-    osPacks.forEach(([dimes, price], i) => {
-      const badge = dimes === 5000 ? "promo" : "";
-      const featured = dimes === 5000 ? 1 : 0;
-      ins.run("onestate", dimes, price, null, badge, featured, i + 1);
+    // OneState RP — two sections: Passes + State Coins
+    const osItems = [
+      // section, title, dimes(coins), price₦, old₦, badge, featured
+      ["Passes", "Gang Season Pass V3", 0, 2450, 4900, "best_value", 1],
+      ["Passes", "Event Premium Pass", 0, 1600, 3200, "popular", 0],
+      ["State Coins", "State Coins Pack 1", 1000, 1600, 3200, "", 0],
+      ["State Coins", "State Coins Pack 2", 5000, 3950, 7900, "popular", 0],
+      ["State Coins", "State Coins Pack 3", 12000, 7450, 14900, "best_value", 1],
+      ["State Coins", "State Coins Pack 6", 200000, 74950, 149900, "premium", 0],
+    ];
+    osItems.forEach(([section, title, dimes, price, old, badge, featured], i) => {
+      ins.run("onestate", section, title, dimes, price * 100, old * 100, badge, featured, i + 1);
     });
-    console.log("[db] ✓ OneState RP packages seeded");
+    console.log("[db] ✓ OneState RP packages seeded (Passes + State Coins)");
   } else {
     console.log("[db] ✓ Packages exist, skipping");
   }

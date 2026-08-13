@@ -12,7 +12,9 @@
             <% }) %>
           </select>
         </div>
-        <div><label>Dimes *</label><input type="number" name="dimes" required min="1" value="<%= pkg ? pkg.dimes : '' %>"></div>
+        <div><label>Section</label><input type="text" name="section" value="<%= pkg ? pkg.section : '' %>" placeholder="e.g. Passes / State Coins (optional)"></div>
+        <div><label>Custom Title</label><input type="text" name="title" value="<%= pkg ? pkg.title : '' %>" placeholder="e.g. Gang Season Pass V3 (optional)"></div>
+        <div><label><%= (pkg && pkg.game) ? (require('../../src/games').getGame(pkg.game)||{}).unitLabel || 'Amount' : 'Amount' %> *</label><input type="number" name="dimes" required min="0" value="<%= pkg ? pkg.dimes : '' %>"></div>
         <div><label>Price (₦) *</label><input type="number" name="price" required min="1" step="0.01" value="<%= pkg ? (pkg.price_kobo / 100) : '' %>"></div>
         <div><label>Old Price (₦)</label><input type="number" name="old_price" min="0" step="0.01" value="<%= pkg && pkg.old_price_kobo ? (pkg.old_price_kobo / 100) : '' %>"></div>
       </div>

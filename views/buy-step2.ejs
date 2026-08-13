@@ -13,7 +13,7 @@
     <% } %>
     <div class="card glow" style="max-width:560px; margin:0 auto;">
       <h1 style="text-align:center;"><%= game.emoji %> <%= game.name %></h1>
-      <p class="muted" style="text-align:center;">You selected: <strong style="color:var(--primary);"><%= package.dimes.toLocaleString() %> <%= game.unitLabel %></strong> for <strong style="color:var(--accent);"><%= formatNaira(package.price_kobo) %></strong></p>
+      <p class="muted" style="text-align:center;">You selected: <strong style="color:var(--primary);"><%= package.title ? package.title : package.dimes.toLocaleString() + ' ' + game.unitLabel %></strong> for <strong style="color:var(--accent);"><%= formatNaira(package.price_kobo) %></strong></p>
       <% if (!game.needPassword) { %>
         <div class="no-pw-notice" style="--game-color:<%= game.color %>;">
           🔐 <%= game.passwordNotice %>
