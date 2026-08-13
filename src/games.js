@@ -35,8 +35,8 @@ const GAMES = [
     name: "CALL OF DUTY MOBILE",
     emoji: "🎯",
     color: "#ffa502",
-    tagline: "CP & credits top-up",
-    unitLabel: "Items",
+    tagline: "COD Points (CP) top-up",
+    unitLabel: "CP",
     accountLabel: "CoDM Player ID",
     accountPlaceholder: "e.g. 9988776655",
     accountPattern: "\\d{6,15}",
@@ -80,4 +80,17 @@ function getGame(slug) {
   return GAME_MAP[slug] || null;
 }
 
-module.exports = { GAMES, GAME_MAP, getGame };
+// Single source of truth for badge display text (icons + label).
+// DB stores: popular | best_value | promo | premium | mega
+function badgeLabel(badge) {
+  switch (badge) {
+    case "popular": return "🔥 POPULAR";
+    case "best_value": return "⭐ BEST VALUE";
+    case "promo": return "🎉 PROMO";
+    case "premium": return "👑 PREMIUM";
+    case "mega": return "💎 MEGA";
+    default: return "";
+  }
+}
+
+module.exports = { GAMES, GAME_MAP, getGame, badgeLabel };

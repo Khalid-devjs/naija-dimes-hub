@@ -262,13 +262,18 @@ function seed() {
     console.log("[db] ✓ Blood Strike packages seeded");
 
     // Call of Duty Mobile starter packs
-    const codmPacks = [[120, 350000], [660, 1800000], [1500, 4000000]];
+    const codmPacks = [
+      [88, 825], [160, 825], [460, 4100], [960, 8250], [2600, 20500],
+      [5400, 41250], [11600, 82500], [23200, 160875], [34800, 239250], [58000, 387750],
+    ];
+    const codmBadge = { 460: "popular", 960: "best_value", 5400: "promo", 23200: "premium", 58000: "mega" };
     codmPacks.forEach(([dimes, price], i) => {
-      const badge = dimes === 660 ? "popular" : "";
-      const featured = dimes === 660 ? 1 : 0;
-      ins.run("codm", dimes, price, null, badge, featured, i + 1);
+      const badge = codmBadge[dimes] || "";
+      const featured = [460, 960, 5400, 58000].includes(dimes) ? 1 : 0;
+      const old = Math.round(price * 2); // 50% OFF shown on source
+      ins.run("codm", dimes, price * 100, old * 100, badge, featured, i + 1);
     });
-    console.log("[db] ✓ Call of Duty Mobile packages seeded");
+    console.log("[db] ✓ Call of Duty Mobile packages seeded (10 CP tiers)");
 
     // MadOut2 starter packs
     const madPacks = [[5000, 250000], [25000, 1000000], [100000, 3500000]];

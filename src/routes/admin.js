@@ -7,6 +7,7 @@ const { STATES, LABELS } = require("../lib/orderMachine");
 const { auditFrom } = require("../lib/audit");
 const config = require("../config");
 const db = require("../db");
+const { GAMES, getGame, badgeLabel } = require("../games");
 
 // ── login ──
 router.get("/login", (req, res) => {

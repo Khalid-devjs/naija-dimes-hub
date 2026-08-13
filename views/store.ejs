@@ -17,7 +17,7 @@
           <% const featured = p.featured || p.badge === 'popular'; %>
           <div class="pkg-card <%= featured ? 'featured' : '' %>" style="--game-color:<%= game.color %>;">
             <% if (p.badge) { %>
-              <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : p.badge === 'promo' ? '🎉 Promo' : p.badge === 'premium' ? '👑 Premium' : p.badge %></span>
+              <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= badgeLabel(p.badge) %></span>
             <% } %>
             <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> <%= game.unitLabel %></div>
             <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>

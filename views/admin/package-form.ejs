@@ -20,9 +20,11 @@
         <div><label>Badge</label>
           <select name="badge">
             <option value="">None</option>
-            <option value="popular" <%= pkg && pkg.badge === 'popular' ? 'selected' : '' %>>Popular</option>
-            <option value="best_value" <%= pkg && pkg.badge === 'best_value' ? 'selected' : '' %>>Best Value</option>
-            <option value="promo" <%= pkg && pkg.badge === 'promo' ? 'selected' : '' %>>Promo</option>
+            <option value="popular" <%= pkg && pkg.badge === 'popular' ? 'selected' : '' %>>🔥 Popular</option>
+            <option value="best_value" <%= pkg && pkg.badge === 'best_value' ? 'selected' : '' %>>⭐ Best Value</option>
+            <option value="promo" <%= pkg && pkg.badge === 'promo' ? 'selected' : '' %>>🎉 Promo</option>
+            <option value="premium" <%= pkg && pkg.badge === 'premium' ? 'selected' : '' %>>👑 Premium</option>
+            <option value="mega" <%= pkg && pkg.badge === 'mega' ? 'selected' : '' %>>💎 Mega</option>
           </select>
         </div>
         <div><label>Sort Order</label><input type="number" name="sort_order" value="<%= pkg ? pkg.sort_order : 0 %>"></div>

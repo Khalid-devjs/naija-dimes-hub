@@ -8,7 +8,7 @@ const { STATES, LABELS } = require("../lib/orderMachine");
 const { auditFrom } = require("../lib/audit");
 const config = require("../config");
 const db = require("../db");
-const { GAMES, getGame } = require("../games");
+const { GAMES, getGame, badgeLabel } = require("../games");
 
 // ── middleware: load packages & settings for all pages ──
 router.use((req, res, next) => {
@@ -20,6 +20,8 @@ router.use((req, res, next) => {
   res.locals.announcement = announcement;
   res.locals.site = site;
   res.locals.GAMES = GAMES;
+  res.locals.badgeLabel = badgeLabel;
+  res.locals.getGame = getGame;
   let hero = {};
   try { hero = JSON.parse(db.get("SELECT value FROM homepage_sections WHERE key = 'hero'")?.value || "{}"); } catch (_) {}
   let annBar = {};
