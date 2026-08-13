@@ -25,9 +25,9 @@
         <span class="status-badge st-<%= order.status.toLowerCase().replace('payment_','') %>"><%= LABELS[order.status] || order.status %></span>
       </div>
       <div class="grid-2 muted" style="font-size:.92rem;">
-        <p><strong style="color:var(--text);">Dimes:</strong> <%= order.package_dimes.toLocaleString() %> 💎</p>
+        <p><strong style="color:var(--text);"><%= orderGame.unitLabel %>:</strong> <%= order.package_dimes.toLocaleString() %> 💎</p>
         <p><strong style="color:var(--text);">Amount:</strong> <span style="color:var(--accent); font-weight:800;"><%= formatNaira(order.amount_kobo) %></span></p>
-        <p><strong style="color:var(--text);">Free Fire UID:</strong> <%= order.freefire_uid %></p>
+        <p><strong style="color:var(--text);"><%= orderGame.accountLabel %>:</strong> <%= order.freefire_uid %></p>
         <p><strong style="color:var(--text);">Placed:</strong> <%= order.created_at %></p>
       </div>
       <h3 class="mt-2">Order Timeline</h3>

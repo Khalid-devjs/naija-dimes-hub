@@ -168,12 +168,13 @@ router.post("/track", (req, res) => {
   if (!/^NDH-\d{8}-[A-Z0-9]{4}$/.test(code)) {
     return res.render("track", { order: null, error: "Invalid order ID format" });
   }
-  const order = db.get("SELECT o.*, p.dimes as package_dimes, p.price_kobo as package_price FROM orders o JOIN diamond_packages p ON o.package_id = p.id WHERE o.order_code = ?", [code]);
+  const order = db.get("SELECT o.*, p.dimes as package_dimes, p.price_kobo as package_price, p.game as package_game FROM orders o JOIN diamond_packages p ON o.package_id = p.id WHERE o.order_code = ?", [code]);
   if (!order) {
     return res.render("track", { order: null, error: "Order not found" });
   }
+  const orderGame = GAME_MAP[order.package_game] || GAMES[0];
   const payment = db.get("SELECT * FROM payments WHERE order_id = ? ORDER BY id DESC LIMIT 1", [order.id]);
-  res.render("track", { order, payment, error: null });
+  res.render("track", { order, payment, orderGame, error: null });
 });
 
 // ── FAQ ──

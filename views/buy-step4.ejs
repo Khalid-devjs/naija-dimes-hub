@@ -14,7 +14,7 @@
         <p><strong>Order ID:</strong> <span style="color:var(--primary); font-family:monospace; font-size:1.1rem;"><%= order.code %></span>
           <button class="btn btn-ghost btn-sm" data-copy="<%= order.code %>" style="margin-left:.5rem;">📋 Copy</button>
         </p>
-        <p><strong>Dimes:</strong> <%= order.dimes.toLocaleString() %></p>
+        <p><strong><%= game.unitLabel %>:</strong> <%= order.dimes.toLocaleString() %></p>
         <p><strong>Amount:</strong> <span style="color:var(--accent); font-size:1.6rem; font-weight:800;"><%= formatNaira(order.amount) %></span>
           <button class="btn btn-ghost btn-sm" data-copy="<%= formatNaira(order.amount) %>">📋 Copy</button>
         </p>

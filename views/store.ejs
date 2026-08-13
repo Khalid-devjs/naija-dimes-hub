@@ -19,7 +19,7 @@
             <% if (p.badge) { %>
               <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : p.badge === 'promo' ? '🎉 Promo' : p.badge === 'premium' ? '👑 Premium' : p.badge %></span>
             <% } %>
-            <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> Items</div>
+            <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> <%= game.unitLabel %></div>
             <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>
             <div class="price"><%= formatNaira(p.price_kobo) %></div>
             <a href="/buy?game=<%= game.slug %>&package_id=<%= p.id %>" class="btn btn-block buy-btn" style="--game-color:<%= game.color %>;"><%= p.badge === 'promo' ? '🎁 Grab Deal' : 'ORDER NOW' %></a>
