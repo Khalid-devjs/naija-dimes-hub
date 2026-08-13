@@ -277,14 +277,21 @@ function seed() {
     });
     console.log("[db] ✓ Call of Duty Mobile packages seeded (10 CP tiers)");
 
-    // MadOut2 starter packs
-    const madPacks = [[5000, 250000], [25000, 1000000], [100000, 3500000]];
-    madPacks.forEach(([dimes, price], i) => {
-      const badge = dimes === 25000 ? "best_value" : "";
-      const featured = dimes === 25000 ? 1 : 0;
-      ins.run("madout2", "", "", dimes, price, null, badge, featured, i + 1);
+    // MadOut2 — two sections: Gems + Passes
+    const madItems = [
+      // section, title, gems, price₦, old₦, badge, featured
+      ["Gems", "", 35, 375, 750, "", 0],
+      ["Gems", "", 240, 2250, 4500, "popular", 1],
+      ["Gems", "", 850, 7500, 15000, "best_value", 1],
+      ["Gems", "", 1750, 15000, 30000, "", 0],
+      ["Gems", "", 4700, 37500, 75000, "promo", 0],
+      ["Passes", "Elite Pass", 0, 2250, 4500, "popular", 0],
+      ["Passes", "Elite+ Pass", 0, 7500, 15000, "premium", 0],
+    ];
+    madItems.forEach(([section, title, dimes, price, old, badge, featured], i) => {
+      ins.run("madout2", section, title, dimes, price * 100, old * 100, badge, featured, i + 1);
     });
-    console.log("[db] ✓ MadOut2 packages seeded");
+    console.log("[db] ✓ MadOut2 packages seeded (Gems + Passes)");
 
     // OneState RP — two sections: Passes + State Coins
     const osItems = [
