@@ -8,6 +8,7 @@ const { STATES, LABELS } = require("../lib/orderMachine");
 const { auditFrom } = require("../lib/audit");
 const config = require("../config");
 const db = require("../db");
+const { GAMES, getGame } = require("../games");
 
 // ── middleware: load packages & settings for all pages ──
 router.use((req, res, next) => {
@@ -18,6 +19,7 @@ router.use((req, res, next) => {
   res.locals.packages = packages;
   res.locals.announcement = announcement;
   res.locals.site = site;
+  res.locals.GAMES = GAMES;
   let hero = {};
   try { hero = JSON.parse(db.get("SELECT value FROM homepage_sections WHERE key = 'hero'")?.value || "{}"); } catch (_) {}
   let annBar = {};
@@ -35,9 +37,20 @@ router.use((req, res, next) => {
   next();
 });
 
-// ── HOME ──
+// ── HOME (game hub) ──
 router.get("/", (req, res) => {
-  res.render("index");
+  res.render("index", { games: GAMES });
+});
+
+// ── GAME STORE ──
+router.get("/store/:slug", (req, res) => {
+  const game = getGame(req.params.slug);
+  if (!game) return res.status(404).render("error", { message: "Game store not found", status: 404 });
+  const packages = db.all(
+    "SELECT * FROM diamond_packages WHERE game = ? AND active = 1 ORDER BY sort_order, dimes",
+    [game.slug]
+  );
+  res.render("store", { game, packages });
 });
 
 // ── PACKAGES PAGE (alias) ──
@@ -47,40 +60,44 @@ router.get("/packages", (req, res) => {
 
 // ── BUY FLOW ──
 router.get("/buy", (req, res) => {
-  res.render("buy-step1", { step: 1, package: null, error: null });
+  const game = getGame(req.query.game) || GAMES[0];
+  res.render("buy-step1", { step: 1, package: null, error: null, game });
 });
 
 // step 1: package selected via POST (simulate wizard)
 router.post("/buy", (req, res) => {
   const packageId = parseInt(req.body.package_id);
+  const game = getGame(req.body.game) || GAMES[0];
   if (!packageId) {
-    return res.render("buy-step1", { step: 1, package: null, error: "Please select a package" });
+    return res.render("buy-step1", { step: 1, package: null, error: "Please select a package", game });
   }
   const pkg = db.get("SELECT * FROM diamond_packages WHERE id = ?", [packageId]);
   if (!pkg) {
-    return res.render("buy-step1", { step: 1, package: null, error: "Invalid package" });
+    return res.render("buy-step1", { step: 1, package: null, error: "Invalid package", game });
   }
-  res.render("buy-step2", { step: 2, package: pkg, error: null, uid: "", nick: "" });
+  res.render("buy-step2", { step: 2, package: pkg, error: null, uid: "", nick: "", game });
 });
 
 // step 2: UID + nickname
 router.post("/buy/uid", (req, res) => {
   const packageId = parseInt(req.body.package_id);
+  const game = getGame(req.body.game) || GAMES[0];
   const uid = (req.body.uid || "").trim();
   const nick = (req.body.nick || "").trim();
   const pkg = db.get("SELECT * FROM diamond_packages WHERE id = ?", [packageId]);
   if (!pkg) {
-    return res.redirect("/buy");
+    return res.redirect("/buy?game=" + encodeURIComponent(game.slug));
   }
-  if (!/^\d{5,12}$/.test(uid)) {
-    return res.render("buy-step2", { step: 2, package: pkg, error: "UID must be 5‑12 digits", uid, nick });
+  if (!new RegExp("^" + (game.accountPattern || ".+") + "$").test(uid)) {
+    return res.render("buy-step2", { step: 2, package: pkg, error: `${game.accountLabel} format is invalid`, uid, nick, game });
   }
-  res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: null, name: "", whatsapp: "", email: "", note: "" });
+  res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: null, name: "", whatsapp: "", email: "", note: "", game });
 });
 
 // step 3: customer info
 router.post("/buy/info", (req, res) => {
   const packageId = parseInt(req.body.package_id);
+  const game = getGame(req.body.game) || GAMES[0];
   const uid = (req.body.uid || "").trim();
   const nick = (req.body.nick || "").trim();
   const name = (req.body.name || "").trim();
@@ -89,18 +106,18 @@ router.post("/buy/info", (req, res) => {
   const note = (req.body.note || "").trim();
   const pkg = db.get("SELECT * FROM diamond_packages WHERE id = ?", [packageId]);
   if (!pkg) {
-    return res.redirect("/buy");
+    return res.redirect("/buy?game=" + encodeURIComponent(game.slug));
   }
   // basic validation
   if (!name || name.length < 2) {
-    return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Please enter your full name", name, whatsapp, email, note });
+    return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Please enter your full name", name, whatsapp, email, note, game });
   }
   const waDigits = (whatsapp.match(/\d/g) || []).join("");
   if (waDigits.length < 7 || waDigits.length > 15) {
-    return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Enter a valid WhatsApp number", name, whatsapp, email, note });
+    return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Enter a valid WhatsApp number", name, whatsapp, email, note, game });
   }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Enter a valid email address", name, whatsapp, email, note });
+  if (email && !/^[^\\s@]+@[^\\s@]+\.[^\\s@]+$/.test(email)) {
+    return res.render("buy-step3", { step: 3, package: pkg, uid, nick, error: "Enter a valid email address", name, whatsapp, email, note, game });
   }
   // create order
   const orderCode = generateOrderCode(db);
@@ -125,6 +142,7 @@ router.post("/buy/info", (req, res) => {
   const paymentSettings = db.get("SELECT * FROM payment_settings WHERE id = 1") || {};
   res.render("buy-step4", {
     step: 4,
+    game,
     paymentSettings,
     order: {
       id: orderId,

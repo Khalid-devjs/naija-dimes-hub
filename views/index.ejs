@@ -12,19 +12,31 @@
     <span class="float-d" style="bottom:25%; left:22%; font-size:1.4rem; animation-delay:2.1s;">💎</span>
     <span class="float-d" style="bottom:20%; right:25%; font-size:1rem; animation-delay:.6s;">✨</span>
     <div style="position:relative;">
-      <h1><span class="grad-text"><%= hero.heading || 'Get Your Free Fire Diamonds Fast ⚡' %></span></h1>
-      <p class="hero-desc"><%= hero.description || 'Buy your diamonds easily with secure bank transfer payment and track your order from start to finish.' %></p>
-      <div class="hero-btns">
-        <a href="/buy" class="btn btn-lg">🛒 <%= hero.button_primary || 'BUY DIMES' %></a>
-        <a href="/track" class="btn btn-lg btn-ghost">📍 <%= hero.button_secondary || 'TRACK ORDER' %></a>
-      </div>
-      <p class="muted mt-2" style="font-size:.85rem;">⚡ Instant delivery after verification &nbsp;•&nbsp; 🏦 Bank transfer only &nbsp;•&nbsp; 🔒 Secure</p>
+      <h1><span class="grad-text"><%= hero.heading || 'Get Your Game Items Fast ⚡' %></span></h1>
+      <p class="hero-desc"><%= hero.description || 'Pick your game, choose a package, pay by bank transfer, and we deliver fast.' %></p>
+      <p class="muted mt-2" style="font-size:.85rem;">⚡ Instant delivery after verification &nbsp;•&nbsp; 🏦 Bank transfer only &nbsp;•&nbsp; 🔒 Secure &nbsp;•&nbsp; 🔑 UID/ID only — no password ever needed</p>
+    </div>
+  </section>
+
+  <!-- ================= GAME STORES ================= -->
+  <section class="container section">
+    <h2 class="text-center mb-2">🎮 <span class="grad-text">Choose Your Game Store</span></h2>
+    <p class="text-center muted mb-3">Tap a game to enter its own store.</p>
+    <div class="game-grid">
+      <% games.forEach((g) => { %>
+        <a href="/store/<%= g.slug %>" class="game-card" style="--game-color:<%= g.color %>;">
+          <div class="game-emoji"><%= g.emoji %></div>
+          <div class="game-name"><%= g.name %></div>
+          <div class="game-tag"><%= g.tagline %></div>
+          <div class="game-enter">Enter Store →</div>
+        </a>
+      <% }) %>
     </div>
   </section>
 
   <!-- ================= ANNOUNCEMENT ================= -->
   <% if (announcement) { %>
-  <section class="container section" style="padding-top:1rem;">
+  <section class="container section" style="padding-top:0;">
     <div class="ann-card glass">
       <div class="flex between" style="align-items:center;">
         <div>
@@ -38,39 +50,6 @@
     </div>
   </section>
   <% } %>
-
-  <!-- ================= PACKAGES ================= -->
-  <section class="container section">
-    <h2 class="text-center mb-3">💎 <span class="grad-text">Diamond Packages</span></h2>
-    <p class="text-center muted mb-3">Choose your package — pay by bank transfer, upload proof, get your dimes.</p>
-    <div class="pkg-grid">
-      <% packages.forEach((p) => { %>
-        <% const featured = p.featured || p.badge === 'popular'; %>
-        <div class="pkg-card <%= featured ? 'featured' : '' %>">
-          <% if (p.badge) { %>
-            <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : '🎁 Promo' %></span>
-          <% } %>
-          <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> Dimes</div>
-          <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>
-          <div class="price"><%= formatNaira(p.price_kobo) %></div>
-          <a href="/buy" class="btn btn-block buy-btn"><%= p.badge === 'promo' ? '🎁 Grab Deal' : 'BUY NOW' %></a>
-        </div>
-      <% }) %>
-    </div>
-    <% if (packages.length === 0) { %>
-      <div class="empty"><div class="empty-ic">💎</div><p>Packages coming soon!</p></div>
-    <% } %>
-  </section>
-
-  <!-- ================= HOW IT WORKS ================= -->
-  <section class="container section">
-    <h2 class="text-center mb-3">⚡ <span class="grad-text">How It Works</span></h2>
-    <div class="grid-3">
-      <div class="card text-center card-hover"><div class="step-num" style="margin:0 auto .8rem;">1</div><h3>Pick a Package</h3><p class="muted" style="font-size:.9rem;">Choose how many diamonds you need.</p></div>
-      <div class="card text-center card-hover"><div class="step-num" style="margin:0 auto .8rem;">2</div><h3>Pay &amp; Upload</h3><p class="muted" style="font-size:.9rem;">Transfer to our bank account and upload your receipt.</p></div>
-      <div class="card text-center card-hover"><div class="step-num" style="margin:0 auto .8rem;">3</div><h3>Get Your Dimes</h3><p class="muted" style="font-size:.9rem;">We verify and deliver straight to your Free Fire UID.</p></div>
-    </div>
-  </section>
 
   <!-- ================= TESTIMONIALS ================= -->
   <% if (testimonials.length > 0) { %>
@@ -92,8 +71,8 @@
   <section class="container section text-center">
     <div class="glass" style="padding:3rem 1.5rem;">
       <h2 class="mb-2">Ready to top up? <span class="grad-text">⚡</span></h2>
-      <p class="muted mb-3">Join hundreds of gamers getting their diamonds fast.</p>
-      <a href="/buy" class="btn btn-lg">🛒 BUY DIMES NOW</a>
+      <p class="muted mb-3">Join thousands of gamers getting their items fast.</p>
+      <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="btn btn-lg">🎮 Pick Your Game</a>
     </div>
   </section>
 

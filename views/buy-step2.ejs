@@ -2,7 +2,7 @@
   <section class="container section" style="max-width:720px;">
     <div class="timeline mb-3">
       <div class="step done"><span class="check">✓</span><span class="label">Select Package</span></div>
-      <div class="step active"><span class="label">Enter Free Fire UID</span></div>
+      <div class="step active"><span class="label">Enter <%= game.accountLabel %></span></div>
       <div class="step"><span class="label">Your Information</span></div>
       <div class="step"><span class="label">Create Order</span></div>
     </div>
@@ -12,19 +12,25 @@
       </div>
     <% } %>
     <div class="card glow" style="max-width:560px; margin:0 auto;">
-      <h1 style="text-align:center;">Enter Your Free Fire UID</h1>
-      <p class="muted" style="text-align:center;">You selected: <strong style="color:var(--primary);"><%= package.dimes.toLocaleString() %> Dimes</strong> for <strong style="color:var(--accent);"><%= formatNaira(package.price_kobo) %></strong></p>
+      <h1 style="text-align:center;"><%= game.emoji %> <%= game.name %></h1>
+      <p class="muted" style="text-align:center;">You selected: <strong style="color:var(--primary);"><%= package.dimes.toLocaleString() %> Items</strong> for <strong style="color:var(--accent);"><%= formatNaira(package.price_kobo) %></strong></p>
+      <% if (!game.needPassword) { %>
+        <div class="no-pw-notice" style="--game-color:<%= game.color %>;">
+          🔐 <%= game.passwordNotice %>
+        </div>
+      <% } %>
       <form method="POST" action="/buy/uid">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="package_id" value="<%= package.id %>">
-        <label for="uid">Free Fire UID *</label>
-        <input type="text" id="uid" name="uid" required value="<%= uid || '' %>" pattern="\d{5,12}" placeholder="e.g. 1234567890">
-        <p class="muted" style="font-size:.8rem;">Enter your Free Fire UID carefully. Diamonds will be sent to the UID provided. ⚠️ Double-check your UID before submitting.</p>
-        <label for="nick">Free Fire Nickname (optional)</label>
-        <input type="text" id="nick" name="nick" value="<%= nick || '' %>" placeholder="Your Free Fire nickname">
+        <input type="hidden" name="game" value="<%= game.slug %>">
+        <label for="uid"><%= game.accountLabel %> *</label>
+        <input type="text" id="uid" name="uid" required value="<%= uid || '' %>" pattern="<%= game.accountPattern %>" title="<%= game.accountPatternTitle %>" placeholder="<%= game.accountPlaceholder %>">
+        <p class="muted" style="font-size:.8rem;">Enter your <%= game.accountLabel %> carefully. Items will be sent to the ID provided. ⚠️ Double-check before submitting.</p>
+        <label for="nick">In-Game Nickname (optional)</label>
+        <input type="text" id="nick" name="nick" value="<%= nick || '' %>" placeholder="Your in-game nickname">
         <div style="text-align:center; margin:1rem 0;">
           <label style="display:flex; align-items:center; gap:.5rem; justify-content:center; cursor:pointer; color:var(--text);">
-            <input type="checkbox" required class="checkbox"> I confirm that my Free Fire UID is correct.
+            <input type="checkbox" required class="checkbox"> I confirm that my <%= game.accountLabel %> is correct.
           </label>
         </div>
         <button type="submit" class="btn btn-block btn-lg">Continue →</button>

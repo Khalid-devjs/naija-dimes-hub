@@ -6,20 +6,22 @@
       </div>
     <% } %>
     <div class="text-center mb-3">
+      <a href="/store/<%= game.slug %>" class="btn btn-ghost btn-sm" style="margin-bottom:1rem;">← <%= game.emoji %> <%= game.name %> Store</a>
       <h1>🛒 <span class="grad-text">Select Your Package</span></h1>
-      <p class="muted">Step 1 of 4 — choose the amount of Free Fire Diamonds you want.</p>
+      <p class="muted">Step 1 of 4 — choose the amount of <strong><%= game.name %></strong> items you want.</p>
     </div>
     <form method="POST" action="/buy">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="game" value="<%= game.slug %>">
       <div class="pkg-grid">
-        <% packages.forEach((p) => { %>
+        <% packages.filter((p) => p.game === game.slug).forEach((p) => { %>
           <% const featured = p.featured || p.badge === 'popular'; %>
           <label class="pkg-card <%= featured ? 'featured' : '' %>" style="cursor:pointer; display:block;">
             <input type="radio" name="package_id" value="<%= p.id %>" style="display:none;" required>
             <% if (p.badge) { %>
-              <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : '🎁 Promo' %></span>
+              <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : p.badge === 'promo' ? '🎁 Promo' : p.badge === 'premium' ? '👑 Premium' : p.badge %></span>
             <% } %>
-            <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> Dimes</div>
+            <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> Items</div>
             <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>
             <div class="price"><%= formatNaira(p.price_kobo) %></div>
           </label>

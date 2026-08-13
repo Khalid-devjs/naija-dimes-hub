@@ -18,7 +18,7 @@
         <p><strong>Amount:</strong> <span style="color:var(--accent); font-size:1.6rem; font-weight:800;"><%= formatNaira(order.amount) %></span>
           <button class="btn btn-ghost btn-sm" data-copy="<%= formatNaira(order.amount) %>">📋 Copy</button>
         </p>
-        <p><strong>Free Fire UID:</strong> <%= order.uid %></p>
+        <p><strong><%= game.accountLabel %>:</strong> <%= order.uid %></p>
         <p><strong>Status:</strong> <span class="status-badge st-pending">🔴 Payment Pending</span></p>
       </div>
     </div>

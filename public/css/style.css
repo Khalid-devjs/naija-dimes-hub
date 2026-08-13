@@ -136,7 +136,45 @@ label { display: block; font-size: .85rem; font-weight: 600; color: var(--muted)
 .pkg-card .buy-btn { margin-top: 1rem; }
 .pkg-card .pkg-badge { position: absolute; top: 12px; right: 12px; }
 
-/* ============ Navbar ============ */
+/* ============ Game Hub (homepage) ============ */
+.game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-top: 1rem; }
+.game-card {
+  display: block; text-align: center; padding: 2.25rem 1.5rem; border-radius: var(--radius);
+  background: linear-gradient(160deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  border: 1px solid var(--border); text-decoration: none; color: var(--text);
+  transition: all .3s ease; position: relative; overflow: hidden;
+}
+.game-card::before {
+  content: ""; position: absolute; inset: 0; opacity: .12;
+  background: radial-gradient(circle at 50% 0%, var(--game-color), transparent 70%); pointer-events: none;
+}
+.game-card:hover { transform: translateY(-8px); border-color: var(--game-color); box-shadow: 0 18px 50px color-mix(in srgb, var(--game-color) 30%, transparent); }
+.game-emoji { font-size: 3rem; line-height: 1; margin-bottom: .6rem; filter: drop-shadow(0 0 12px var(--game-color)); }
+.game-name { font-size: 1.25rem; font-weight: 800; letter-spacing: .5px; color: #fff; }
+.game-tag { font-size: .82rem; color: var(--muted); margin-top: .35rem; }
+.game-enter { margin-top: 1rem; font-weight: 700; color: var(--game-color); font-size: .95rem; }
+
+/* ============ Store page ============ */
+.store-head { text-align: center; margin-bottom: 1.5rem; }
+.store-badge {
+  display: inline-block; font-size: 1.4rem; font-weight: 800; color: #fff;
+  padding: .4rem 1.2rem; border-radius: 999px; background: color-mix(in srgb, var(--game-color) 22%, transparent);
+  border: 1px solid var(--game-color); box-shadow: 0 0 20px color-mix(in srgb, var(--game-color) 35%, transparent);
+}
+.store-foot-note { max-width: 720px; margin: 2rem auto 0; text-align: center; }
+.no-pw-notice {
+  background: color-mix(in srgb, var(--game-color) 12%, transparent); border: 1px solid var(--game-color);
+  color: var(--text); border-radius: 12px; padding: .85rem 1rem; margin: 1rem 0; font-size: .92rem; font-weight: 600;
+}
+
+/* game-colored pkg + buy buttons */
+.pkg-card { --game-color: var(--primary); }
+.pkg-card.featured { border-color: var(--game-color); background: color-mix(in srgb, var(--game-color) 12%, transparent); }
+.pkg-card:hover { border-color: var(--game-color); box-shadow: 0 16px 50px color-mix(in srgb, var(--game-color) 25%, transparent); }
+.buy-btn { --game-color: var(--primary); background: var(--game-color); color: #04120c; font-weight: 800; border: none; }
+.buy-btn:hover { box-shadow: 0 10px 30px color-mix(in srgb, var(--game-color) 40%, transparent); transform: translateY(-2px); }
+
+
 .navbar {
   position: sticky; top: 0; z-index: 100;
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);

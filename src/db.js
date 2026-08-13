@@ -42,6 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 CREATE TABLE IF NOT EXISTS diamond_packages (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  game         TEXT NOT NULL DEFAULT 'freefire',
   dimes        INTEGER NOT NULL,
   price_kobo   INTEGER NOT NULL,
   old_price_kobo INTEGER,
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS diamond_packages (
   created_at   TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE INDEX IF NOT EXISTS idx_packages_game ON diamond_packages(game, active);
 
 CREATE TABLE IF NOT EXISTS promo_codes (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -234,20 +236,57 @@ function seed() {
   row = db.prepare("SELECT COUNT(*) c FROM diamond_packages").get();
   if (row.c === 0) {
     const packs = [
+      // Free Fire (existing)
       [300, 200000], [1000, 500000], [2000, 1000000], [5000, 2500000],
       [10000, 5000000], [20000, 10000000], [30000, 15000000], [40000, 20000000],
       [50000, 25000000], [75000, 37500000], [100000, 50000000],
     ];
     const ins = db.prepare(
-      "INSERT INTO diamond_packages (dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,1,?,?)"
+      "INSERT INTO diamond_packages (game, dimes, price_kobo, old_price_kobo, badge, active, featured, sort_order) VALUES (?,?,?,?,?,1,?,?)"
     );
     packs.forEach(([dimes, price], i) => {
       const badge = dimes === 1000 ? "popular" : dimes === 5000 ? "best_value" : dimes === 100000 ? "promo" : "";
       const featured = dimes === 1000 || dimes === 5000 || dimes === 10000 ? 1 : 0;
       const old = dimes === 1000 ? 550000 : dimes === 2000 ? 1100000 : null;
-      ins.run(dimes, price, old, badge, featured, i + 1);
+      ins.run("freefire", dimes, price, old, badge, featured, i + 1);
     });
-    console.log("[db] ✓ 11 diamond packages seeded (editable in admin)");
+    console.log("[db] ✓ 11 Free Fire packages seeded (editable in admin)");
+
+    // Blood Strike starter packs
+    const bsPacks = [[100, 300000], [500, 1200000], [1200, 2500000]];
+    bsPacks.forEach(([dimes, price], i) => {
+      const badge = dimes === 500 ? "best_value" : "";
+      const featured = dimes === 500 ? 1 : 0;
+      ins.run("bloodstrike", dimes, price, null, badge, featured, i + 1);
+    });
+    console.log("[db] ✓ Blood Strike packages seeded");
+
+    // Call of Duty Mobile starter packs
+    const codmPacks = [[120, 350000], [660, 1800000], [1500, 4000000]];
+    codmPacks.forEach(([dimes, price], i) => {
+      const badge = dimes === 660 ? "popular" : "";
+      const featured = dimes === 660 ? 1 : 0;
+      ins.run("codm", dimes, price, null, badge, featured, i + 1);
+    });
+    console.log("[db] ✓ Call of Duty Mobile packages seeded");
+
+    // MadOut2 starter packs
+    const madPacks = [[5000, 250000], [25000, 1000000], [100000, 3500000]];
+    madPacks.forEach(([dimes, price], i) => {
+      const badge = dimes === 25000 ? "best_value" : "";
+      const featured = dimes === 25000 ? 1 : 0;
+      ins.run("madout2", dimes, price, null, badge, featured, i + 1);
+    });
+    console.log("[db] ✓ MadOut2 packages seeded");
+
+    // OneState RP starter packs
+    const osPacks = [[1000, 400000], [5000, 1800000], [20000, 6500000]];
+    osPacks.forEach(([dimes, price], i) => {
+      const badge = dimes === 5000 ? "promo" : "";
+      const featured = dimes === 5000 ? 1 : 0;
+      ins.run("onestate", dimes, price, null, badge, featured, i + 1);
+    });
+    console.log("[db] ✓ OneState RP packages seeded");
   } else {
     console.log("[db] ✓ Packages exist, skipping");
   }

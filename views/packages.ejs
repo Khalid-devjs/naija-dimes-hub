@@ -1,23 +1,27 @@
 <%- include('layout') %>
   <section class="container section">
-    <h2 class="text-center mb-2">💎 <span class="grad-text">Diamond Packages</span></h2>
-    <p class="text-center muted mb-3">All prices are configurable by the admin — always up to date.</p>
-    <div class="pkg-grid">
-      <% packages.forEach((p) => { %>
-        <% const featured = p.featured || p.badge === 'popular'; %>
-        <div class="pkg-card <%= featured ? 'featured' : '' %>">
-          <% if (p.badge) { %>
-            <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : '🎁 Promo' %></span>
-          <% } %>
-          <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> Dimes</div>
-          <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>
-          <div class="price"><%= formatNaira(p.price_kobo) %></div>
-          <a href="/buy" class="btn btn-block buy-btn">BUY NOW</a>
+    <h2 class="text-center mb-2">🛒 <span class="grad-text">All Packages</span></h2>
+    <p class="text-center muted mb-3">Pick your game store above for the smoothest experience — or browse everything here.</p>
+    <% const GAMES = require('../../src/games').GAMES; %>
+    <% GAMES.forEach((g) => { %>
+      <% const gp = packages.filter((p) => p.game === g.slug && p.active); %>
+      <% if (gp.length) { %>
+        <h3 style="color:<%= g.color %>; margin:1.5rem 0 .75rem;"><%= g.emoji %> <%= g.name %></h3>
+        <div class="pkg-grid">
+          <% gp.forEach((p) => { %>
+            <% const featured = p.featured || p.badge === 'popular'; %>
+            <div class="pkg-card <%= featured ? 'featured' : '' %>" style="--game-color:<%= g.color %>;">
+              <% if (p.badge) { %>
+                <span class="badge badge-<%= p.badge === 'best_value' ? 'best' : p.badge %> pkg-badge"><%= p.badge === 'popular' ? '⭐ Popular' : p.badge === 'best_value' ? '🔥 Best Value' : p.badge === 'promo' ? '🎉 Promo' : p.badge === 'premium' ? '👑 Premium' : p.badge %></span>
+              <% } %>
+              <div class="dimes"><span><%= p.dimes.toLocaleString() %></span> Items</div>
+              <% if (p.old_price_kobo) { %><div class="old-price"><%= formatNaira(p.old_price_kobo) %></div><% } %>
+              <div class="price"><%= formatNaira(p.price_kobo) %></div>
+              <a href="/buy?game=<%= g.slug %>&package_id=<%= p.id %>" class="btn btn-block buy-btn" style="--game-color:<%= g.color %>;">ORDER NOW</a>
+            </div>
+          <% }) %>
         </div>
-      <% }) %>
-    </div>
-    <% if (packages.length === 0) { %>
-      <div class="empty"><div class="empty-ic">💎</div><p>Packages coming soon!</p></div>
-    <% } %>
+      <% } %>
+    <% }) %>
   </section>
 <%- include('partials/footer') %>

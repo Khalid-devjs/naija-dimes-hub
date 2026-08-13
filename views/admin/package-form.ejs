@@ -4,6 +4,14 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <% if (pkg) { %><input type="hidden" name="id" value="<%= pkg.id %>"><% } %>
       <div class="form-row">
+        <div><label>Game *</label>
+          <select name="game" required>
+            <% const GAMES = require('../../src/games').GAMES; %>
+            <% GAMES.forEach((g) => { %>
+              <option value="<%= g.slug %>" <%= pkg && pkg.game === g.slug ? 'selected' : '' %>><%= g.emoji %> <%= g.name %></option>
+            <% }) %>
+          </select>
+        </div>
         <div><label>Dimes *</label><input type="number" name="dimes" required min="1" value="<%= pkg ? pkg.dimes : '' %>"></div>
         <div><label>Price (₦) *</label><input type="number" name="price" required min="1" step="0.01" value="<%= pkg ? (pkg.price_kobo / 100) : '' %>"></div>
         <div><label>Old Price (₦)</label><input type="number" name="old_price" min="0" step="0.01" value="<%= pkg && pkg.old_price_kobo ? (pkg.old_price_kobo / 100) : '' %>"></div>
