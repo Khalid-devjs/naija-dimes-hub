@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Login | Naija Dimes Hub</title>
+  <title>Admin Login | Naija Top Up Store</title>
   <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <style>
@@ -19,7 +19,7 @@
   <div class="card login-card glow">
     <div class="logo-big">💎</div>
     <h2>Admin Login</h2>
-    <div class="sub">Naija Dimes Hub — Control Panel</div>
+    <div class="sub">Naija Top Up Store — Control Panel</div>
     <% if (error) { %><div class="error">⚠️ <%= error %></div><% } %>
     <form method="POST" action="/admin/login">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>Admin — Naija Dimes Hub</title>
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>Admin — Naija Top Up Store</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
     :root {
@@ -80,7 +80,7 @@
 <body>
 <div class="admin-wrap">
   <aside class="sidebar">
-    <h3>⚡ Naija Dimes</h3>
+    <h3>⚡ Naija Top Up</h3>
     <a href="/admin/" class="<%= reqPath === '/admin/' ? 'active' : '' %>">📊 Dashboard</a>
     <a href="/admin/orders" class="<%= reqPath && reqPath.startsWith('/admin/orders') ? 'active' : '' %>">📦 Orders</a>
     <a href="/admin/payments" class="<%= reqPath && reqPath.startsWith('/admin/payments') ? 'active' : '' %>">💳 Payments</a>

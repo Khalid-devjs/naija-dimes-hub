@@ -370,7 +370,7 @@ function seed() {
   row = db.prepare("SELECT COUNT(*) c FROM site_settings").get();
   if (row.c === 0) {
     const sets = [
-      ["store_name", "Naija Dimes Hub"],
+      ["store_name", "Naija Top Up Store"],
       ["tagline", "Fast. Simple. Reliable."],
       ["currency", "₦"],
       ["maintenance_mode", "0"],
