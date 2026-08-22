@@ -9,6 +9,7 @@ const { auditFrom } = require("../lib/audit");
 const config = require("../config");
 const db = require("../db");
 const { GAMES, getGame, badgeLabel } = require("../games");
+const { notifyOrder } = require("../lib/notify");
 
 // ── middleware: load packages & settings for all pages ──
 router.use((req, res, next) => {
@@ -141,6 +142,19 @@ router.post("/buy/info", (req, res) => {
     req.ip || req.socket?.remoteAddress || ""
   );
   const orderId = ins.lastInsertRowid;
+  // ── notify owner (Telegram) on purchase ──
+  try {
+    notifyOrder({
+      code: orderCode,
+      item: `${pkg.dimes ? pkg.dimes + ' ' : ''}${pkg.name}`,
+      amount: amountKobo,
+      name,
+      whatsapp,
+      email: email || "-",
+      uid,
+      note
+    });
+  } catch (e) { console.error("[notify] failed:", e.message); }
   const paymentSettings = db.get("SELECT * FROM payment_settings WHERE id = 1") || {};
   res.render("buy-step4", {
     step: 4,
